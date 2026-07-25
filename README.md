@@ -1,6 +1,6 @@
 # St. Pauls Deliverance Center — Official Website
 
-**Pastor Maurice McCormick | Lumberton, North Carolina**
+**Pastor Maurice McCormick | 1291 W Broad St, St Pauls, NC 28384**
 
 > *Miracles · Signs · Wonders*
 

@@ -9,6 +9,14 @@
 - **WWW:** [https://www.spdc.church](https://www.spdc.church)
 - GitHub Pages fallback: [https://envisionproductions316.github.io/SPDC](https://envisionproductions316.github.io/SPDC)
 
+## ⚠️ Hosting requirement (do not skip)
+This site runs on **free GitHub Pages**, which only works while the repository is **Public**.
+
+- **Never set this repo to Private** — that disables Pages and shows *“There isn't a GitHub Pages site here.”*
+- Keep custom domain `spdc.church` + **Enforce HTTPS**
+- Keep Pages source: branch `main`, folder `/`
+- A scheduled workflow (`.github/workflows/pages-keepalive.yml`) checks the live site every 6 hours and tries to restore Pages if something breaks
+
 ## Features
 - Full church website with member portal
 - Admin control panel for content, members, and settings
@@ -24,6 +32,7 @@
 ## Files
 - `index.html` — Complete self-contained website
 - `CNAME` — Custom domain (`spdc.church`)
+- `.github/workflows/pages-keepalive.yml` — Live-site health monitor / auto-repair
 
 ## Usage
 Open `index.html` locally, or visit the live domain after GitHub Pages deploys.

@@ -1,0 +1,128 @@
+# Keeps spdc.church online.
+# This GitHub plan only supports Pages on PUBLIC repos. Making the repo private
+# disables Pages and shows: "There isn't a GitHub Pages site here."
+name: Pages keepalive
+
+on:
+  schedule:
+    - cron: '15 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'CNAME'
+      - '.github/workflows/pages-keepalive.yml'
+      - 'index.html'
+
+permissions:
+  contents: read
+  pages: write
+  administration: write
+  issues: write
+
+concurrency:
+  group: pages-keepalive
+  cancel-in-progress: true
+
+jobs:
+  ensure-live:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure public repo + Pages + custom domain
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          VIS="$(gh api "repos/$REPO" --jq .visibility)"
+          echo "visibility=$VIS"
+
+          if [ "$VIS" != "public" ]; then
+            echo "::error::Repository is $VIS — Pages requires PUBLIC on this plan."
+            if gh repo edit "$REPO" --visibility public --accept-visibility-change-consequences; then
+              echo "Restored visibility to public."
+            else
+              cat > /tmp/issue.md <<'MD'
+          ## Critical: spdc.church is down
+
+          The repository is **not public**. Free GitHub Pages cannot host private repos, which causes:
+
+          > There isn't a GitHub Pages site here.
+
+          ### Fix now
+          1. Settings → General → Danger Zone → **Change repository visibility** → **Public**
+          2. Settings → Pages → Deploy from branch **main** / **(root)**
+          3. Custom domain: **spdc.church** + Enforce HTTPS
+
+          **Never make this repo private again** while hosting on free GitHub Pages.
+          MD
+              # Dedent accidental leading spaces from heredoc indentation
+              sed -i 's/^          //' /tmp/issue.md
+              gh issue create --repo "$REPO" --title "CRITICAL: spdc.church Pages outage (repo not public)" --body-file /tmp/issue.md || true
+              exit 1
+            fi
+          fi
+
+          if ! gh api "repos/$REPO/pages" >/dev/null 2>&1; then
+            echo "Creating Pages site..."
+            gh api "repos/$REPO/pages" -X POST \
+              -f build_type=legacy \
+              -f 'source[branch]=main' \
+              -f 'source[path]=/' || true
+          fi
+
+          gh api "repos/$REPO/pages" -X PUT \
+            -f cname=spdc.church \
+            -F https_enforced=true \
+            -f 'source[branch]=main' \
+            -f 'source[path]=/' || true
+
+          gh api "repos/$REPO/pages/builds" -X POST || true
+          sleep 8
+          gh api "repos/$REPO/pages" --jq '{status,cname,https_enforced}'
+
+      - name: Verify https://spdc.church
+        id: probe
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          CODE="$(curl -sS -o /tmp/spdc-body.html -w '%{http_code}' --max-time 30 'https://spdc.church/?keepalive=1' || echo 000)"
+          echo "http_code=$CODE"
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
+          test "$CODE" = "200"
+          if grep -qi "There isn't a GitHub Pages site here" /tmp/spdc-body.html; then
+            echo "::error::GitHub Pages placeholder page detected"
+            exit 1
+          fi
+          echo "Live site OK"
+
+      - name: Open outage issue if probe failed
+        if: steps.probe.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          cat > /tmp/issue.md <<MD
+          ## Live probe failed
+
+          \`https://spdc.church\` did not return a healthy homepage.
+
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          ### Checklist
+          - [ ] Repo visibility is **Public**
+          - [ ] Settings → Pages → **main** / **/**
+          - [ ] Custom domain **spdc.church** + Enforce HTTPS
+          - [ ] DNS still points at GitHub Pages
+
+          **Never set this repository to Private** while using free GitHub Pages.
+          MD
+          sed -i 's/^          //' /tmp/issue.md
+          EXISTING="$(gh issue list --repo "$REPO" --state open --search 'pages-outage in:title' --json number --jq '.[0].number // empty')"
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "$REPO" --body-file /tmp/issue.md
+          else
+            gh issue create --repo "$REPO" --title "pages-outage: spdc.church health check failed" --body-file /tmp/issue.md || true
+          fi
+          exit 1

@@ -1,0 +1,21 @@
+---
+description: Never make SPDC private — GitHub Pages requires a public repo
+alwaysApply: true
+---
+
+# GitHub Pages hosting (spdc.church)
+
+This repository hosts **https://spdc.church** on **GitHub Pages**.
+
+## Hard rules
+- **Never** change repository visibility to Private / Internal.
+- Free GitHub Pages does **not** work on private repos and shows: "There isn't a GitHub Pages site here."
+- Keep `CNAME` as `spdc.church`.
+- Keep Pages source: branch `main`, folder `/` (root), HTTPS enforced.
+
+## If the site 404s
+1. Confirm visibility is **Public** (`gh repo view --json visibility`)
+2. Re-enable Pages on `main` /
+3. Confirm custom domain `spdc.church` + HTTPS
+
+A scheduled workflow `.github/workflows/pages-keepalive.yml` monitors this and tries to auto-repair.

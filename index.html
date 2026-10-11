@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-11-leadership-polish" />
+<meta name="spdc-build" content="2026-10-11-mail-giving" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -2077,29 +2077,129 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
 .give-method span { color: var(--text-on-dark-soft); font-size: 14px; }
 .give-method .external { color: var(--accent); font-size: 14px; }
 .give-mail-box {
-  margin-top: 8px;
-  padding: 22px 24px;
-  border-radius: var(--r-lg);
-  border: 1px solid rgba(244,197,66,.35);
-  background: rgba(255,248,225,.06);
+  margin: 28px 0 8px;
+  padding: 0;
+  border-radius: var(--r-xl);
+  border: 1px solid rgba(244, 197, 66, 0.4);
+  background:
+    radial-gradient(ellipse 70% 50% at 100% 0%, rgba(244, 197, 66, 0.14), transparent 55%),
+    linear-gradient(165deg, rgba(18, 36, 88, 0.95), rgba(8, 18, 48, 0.98));
+  box-shadow: 0 20px 44px -22px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
 }
-.give-mail-box h4 {
+.give-mail-box .mail-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 26px 18px;
+  border-bottom: 1px solid rgba(244, 197, 66, 0.22);
+}
+.give-mail-box .mail-stamp {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: var(--grad-gold);
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-gold);
+}
+.give-mail-box .mail-stamp svg { width: 30px; height: 30px; display: block; }
+.give-mail-box .mail-head-text h4 {
   color: var(--accent);
   font-family: 'Cinzel', serif;
-  font-size: 18px;
-  margin-bottom: 8px;
+  font-size: 22px;
+  margin: 0 0 4px;
+  letter-spacing: .03em;
 }
-.give-mail-box p {
+.give-mail-box .mail-head-text .mail-kicker {
+  margin: 0;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255, 248, 225, 0.65);
+}
+.give-mail-box .mail-body {
+  padding: 22px 26px 26px;
+}
+.give-mail-box .mail-intro {
   color: var(--text-on-dark-soft);
   font-size: 15px;
   line-height: 1.65;
-  margin: 0 0 8px;
+  margin: 0 0 16px;
+  max-width: 42em;
+}
+.give-mail-box .mail-envelope {
+  position: relative;
+  padding: 22px 24px 20px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fffaf0 0%, #f7ebc8 100%);
+  border: 1px dashed rgba(13, 42, 107, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.65);
+}
+.give-mail-box .mail-envelope::before {
+  content: 'AIR MAIL';
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .18em;
+  color: var(--primary-dark);
+  opacity: .35;
+  border: 1px solid rgba(13, 42, 107, 0.25);
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+.give-mail-box .mail-to-label {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin: 0 0 10px;
 }
 .give-mail-box .mail-address {
-  color: var(--text-on-dark);
+  color: var(--primary-dark);
   font-family: 'Cinzel', serif;
-  font-size: 17px;
+  font-size: 20px;
+  line-height: 1.45;
+  margin: 0;
+  white-space: pre-line;
+}
+.give-mail-box .mail-payable {
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid rgba(13, 42, 107, 0.12);
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 14px;
+  color: rgba(13, 42, 107, 0.8);
   line-height: 1.5;
+}
+.give-mail-box .mail-payable strong {
+  color: var(--primary-dark);
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+.give-mail-box .mail-note {
+  margin: 16px 0 0;
+  color: rgba(255, 248, 225, 0.72);
+  font-size: 14px;
+  line-height: 1.6;
+}
+@media (max-width: 640px) {
+  .give-mail-box .mail-head { padding: 18px 18px 14px; }
+  .give-mail-box .mail-body { padding: 18px; }
+  .give-mail-box .mail-envelope { padding: 18px 16px 16px; }
+  .give-mail-box .mail-envelope::before { display: none; }
+  .give-mail-box .mail-address { font-size: 17px; }
 }
 
 /* ============================================================
@@ -4709,6 +4809,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
         </div>
       </div>
 
+      <div class="leader-picker-label"><span>Choose a leader</span></div>
       <div class="leader-grid" id="leaderGrid" aria-label="Choose a leader"></div>
     </div>
   </section>
@@ -7301,12 +7402,26 @@ function renderGivingMethods(){
     } else {
       const m = mail[0];
       const detail = (m.detail||'').trim() || address;
+      const church = (STATE.settings && STATE.settings.churchName) ? STATE.settings.churchName : 'St. Pauls Deliverance Center';
+      const envelopeSvg = `<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M6 14h36v22H6V14z" stroke="currentColor" stroke-width="2.5" fill="none"/><path d="M6 16l18 12L42 16" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="none"/></svg>`;
       mailBox.style.display = '';
       mailBox.innerHTML = `
-        <h4>${escapeHtml(m.icon||'✉️')} ${escapeHtml(m.label||'Mail a Gift')}</h4>
-        <p>Mail checks, money orders, or donation letters to the church office:</p>
-        <div class="mail-address">${escapeHtml(detail)}</div>
-        <p style="margin-top:12px;">Please include your name and whether the gift is for tithes, offerings, missions, or another purpose.</p>`;
+        <div class="mail-head">
+          <div class="mail-stamp">${envelopeSvg}</div>
+          <div class="mail-head-text">
+            <p class="mail-kicker">By post</p>
+            <h4>${escapeHtml(m.label||'Mail a Gift')}</h4>
+          </div>
+        </div>
+        <div class="mail-body">
+          <p class="mail-intro">Prefer to give by mail? Send checks, money orders, or a donation letter to the church office at this address:</p>
+          <div class="mail-envelope">
+            <p class="mail-to-label">Mail to</p>
+            <p class="mail-address">${escapeHtml(church)}\n${escapeHtml(detail)}</p>
+            <p class="mail-payable">Make checks payable to <strong>${escapeHtml(church)}</strong></p>
+          </div>
+          <p class="mail-note">Please include your name and note whether the gift is for tithes, offerings, missions, or another purpose.</p>
+        </div>`;
     }
   }
 }

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-11-mail-admin-form" />
+<meta name="spdc-build" content="2026-10-11-remove-budget" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -2203,19 +2203,8 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
 }
 
 /* ============================================================
-   BUDGET FORM
+   FORMS
    ============================================================ */
-.budget { background: var(--grad-cream); }
-.budget-form {
-  max-width: 760px;
-  margin: 0 auto;
-  background: white;
-  border-radius: var(--r-xl);
-  padding: 50px;
-  box-shadow: var(--shadow-card);
-  border: 1px solid var(--border-soft);
-  border-top: 6px solid var(--accent);
-}
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -3310,7 +3299,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   .admin-main, .member-main { padding: 28px 22px; }
   section.spdc { padding: 70px 20px; }
   .amount-grid { grid-template-columns: repeat(2, 1fr); }
-  .budget-form, .prayer-form-wrap { padding: 30px; }
+  .prayer-form-wrap { padding: 30px; }
   .first-time-card { padding: 28px; }
   .event-row, .event-row.has-image { grid-template-columns: 80px 1fr; }
   .event-row .event-rsvp { grid-column: 1 / -1; justify-self: start; }
@@ -4960,67 +4949,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
       <div class="give-side" style="margin-top:40px;max-width:720px;margin-left:auto;margin-right:auto;text-align:center;">
         <h3>Thank You</h3>
         <p>Every seed sown advances the Kingdom — reaching the lost, training disciples, and ministering to those in need.</p>
-        <div style="margin-top:28px;padding:22px;background:rgba(255,248,225,0.06);border-radius:14px;border:1px solid rgba(244,197,66,0.25);text-align:left;">
-          <strong style="color:var(--accent);font-family:'Cinzel',serif;font-size:14px;letter-spacing:0.12em;">BUDGET REQUEST</strong>
-          <p style="font-size:14px;color:var(--text-on-dark-soft);margin-top:8px;margin-bottom:14px;">Ministry leaders, submit funding requests through our request portal.</p>
-          <button class="btn-primary" onclick="goPage('budget')" style="font-size:13px;padding:11px 20px;">Submit Request →</button>
-        </div>
       </div>
-    </div>
-  </section>
-</section>
-
-<!-- ========== PAGE: BUDGET ========== -->
-<section id="page-budget" class="page">
-  <section class="spdc budget" style="padding-top:60px;">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Ministry Resources</span>
-        <h2>Church Budget Request</h2>
-        <div class="divider"><span>✦</span></div>
-        <p>Submit a budget or resource request for your ministry. Leadership reviews requests prayerfully.</p>
-      </div>
-
-      <form class="budget-form" onsubmit="submitBudget(event)">
-        <div class="form-row">
-          <div class="form-field">
-            <label>Your Name</label>
-            <input type="text" required placeholder="Full name" name="name" />
-          </div>
-          <div class="form-field">
-            <label>Email</label>
-            <input type="email" required placeholder="you@example.com" name="email" />
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <label>Ministry / Department</label>
-            <select required name="ministry">
-              <option value="">Select...</option>
-              <option>Worship Ministry</option>
-              <option>Youth Ministry</option>
-              <option>Outreach &amp; Missions</option>
-              <option>Sunday School</option>
-              <option>Media &amp; Tech</option>
-              <option>Hospitality</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label>Amount Requested ($)</label>
-            <input type="number" required placeholder="0.00" min="0" name="amount" />
-          </div>
-        </div>
-        <div class="form-field" style="margin-bottom:18px;">
-          <label>Purpose / Description</label>
-          <textarea required placeholder="Describe the need, intended use of funds, and how this serves the mission..." name="purpose"></textarea>
-        </div>
-        <div class="form-field" style="margin-bottom:18px;">
-          <label>Date Funds Needed By</label>
-          <input type="date" required name="needBy" />
-        </div>
-        <button type="submit" class="form-submit">Submit Request</button>
-      </form>
     </div>
   </section>
 </section>
@@ -5306,7 +5235,6 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
           <button class="admin-tab-btn" data-tab="services">🙏 Service Times</button>
           <button class="admin-tab-btn" data-tab="social">🔗 Social Links</button>
           <button class="admin-tab-btn" data-tab="giving">💝 Giving Methods</button>
-          <button class="admin-tab-btn" data-tab="budget">📋 Budget Requests <span class="pending-badge" id="badge-pending-budget" style="display:none;">0</span></button>
           <button class="admin-tab-btn" data-tab="settings">⚙️ Settings</button>
         </div>
       </aside>
@@ -5769,13 +5697,6 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
           <div class="admin-list" id="admin-giving-list"></div>
         </div>
 
-        <!-- BUDGET -->
-        <div class="admin-tab" data-content="budget">
-          <h2>Budget Requests</h2>
-          <p class="sub">Review submitted budget requests from ministry leaders.</p>
-          <div class="admin-list" id="admin-budget-list"></div>
-        </div>
-
         <!-- SETTINGS -->
         <div class="admin-tab" data-content="settings">
           <h2>System Settings</h2>
@@ -5850,7 +5771,6 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
       <h4>Give &amp; Serve</h4>
       <ul>
         <li><a onclick="goPage('give')">Tithes &amp; Offerings</a></li>
-        <li><a onclick="goPage('budget')">Budget Request</a></li>
         <li><a onclick="goPage('connect')">Newsletter</a></li>
         <li><a onclick="goPage('signup')">Join SPDC</a></li>
       </ul>
@@ -6117,7 +6037,6 @@ const DEFAULT_STATE = {
     { id:'give-givelify', kind:'givelify', label:'Givelify', icon:'🙏', detail:'Give online to St Pauls Deliverance Center', url:'https://www.givelify.com/donate/MTg4NTc3Nw==/selection', qrImage:null },
     { id:'give-mail', kind:'mail', label:'Mail a Gift', icon:'✉️', detail:'', url:'', qrImage:null }
   ],
-  budgetRequests:[],
   emailCampaigns:[],
   members:[
     { id:'admin1', name:'Administrator', email:'admin@spdc.church', phone:'', password:'admin', role:'admin', status:'approved', joinedAt:'2025-01-01', bio:'', avatar:null }
@@ -6425,6 +6344,7 @@ async function submitContactForm(e){
 
 /* ============================================================ NAVIGATION */
 function goPage(page){
+  if(page==='budget') page='give';
   if(page==='member'&&!STATE.currentUser) page='login';
   if(page==='admin'&&(!STATE.currentUser||STATE.currentUser.role!=='admin')){ toast('Sign in as admin first.','Login Required',true); page='login'; }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -7665,8 +7585,6 @@ function submitPrayer(e){ e.preventDefault(); const fd=new FormData(e.target); S
 function prayForRequest(id){ const p=STATE.prayers.find(x=>x.id===id); if(!p)return; p.prays=(p.prays||0)+1; renderPrayerWall(); toast('🕊 Standing in agreement.','Prayer Lifted'); }
 function rsvpEvent(id){ if(!STATE.currentUser){toast('Sign in to RSVP for events.','Login Required',true);goPage('login');return;} let ev=STATE.events.find(e=>e.id===id); if(!ev){ const site=SITE_EVENTS.find(e=>e.id===id); if(!site)return; ev=Object.assign({}, site, { rsvps:[] }); STATE.events.push(ev);} ev.rsvps=ev.rsvps||[]; const mi=ev.rsvps.indexOf(STATE.currentUser.id); if(mi>=0){ev.rsvps.splice(mi,1);toast(`RSVP cancelled for "${ev.title}".`,'RSVP Removed');}else{ev.rsvps.push(STATE.currentUser.id);toast(`You're going to "${ev.title}"! 🎉`,'RSVP Confirmed');} saveState(); renderEvents(); renderMemberAll(); }
 function subscribeNewsletter(e){ e.preventDefault(); const fd=new FormData(e.target); const email=fd.get('email').trim().toLowerCase(); if(STATE.newsletterSubs.includes(email)){toast("You're already subscribed!",'Welcome Back');}else{STATE.newsletterSubs.push(email);toast(`Thanks for subscribing!`,'Subscribed!');} e.target.reset(); }
-function submitBudget(e){ e.preventDefault(); const fd=new FormData(e.target); STATE.budgetRequests.push({id:uid('b'),name:fd.get('name'),email:fd.get('email'),ministry:fd.get('ministry'),amount:parseFloat(fd.get('amount')),purpose:fd.get('purpose'),needBy:fd.get('needBy'),submitted:new Date().toISOString().slice(0,10),status:'pending'}); e.target.reset(); renderAdminBudget(); updateAdminBadges(); toast('Budget request submitted.','Submitted'); }
-
 /* ============================================================ MEMBER PORTAL */
 function switchMemberTab(tab){ document.querySelectorAll('.member-tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab)); document.querySelectorAll('.member-tab').forEach(t=>t.classList.toggle('active',t.dataset.content===tab)); }
 function renderMemberAll(){
@@ -7704,7 +7622,6 @@ function renderAdminMembers(){
 }
 function updateAdminBadges(){
   const pm=STATE.members.filter(m=>m.status==='pending').length; const bm=document.getElementById('badge-pending-members'); if(bm){bm.style.display=pm>0?'inline-block':'none';bm.textContent=pm;}
-  const pb=STATE.budgetRequests.filter(b=>b.status==='pending').length; const bb=document.getElementById('badge-pending-budget'); if(bb){bb.style.display=pb>0?'inline-block':'none';bb.textContent=pb;}
 }
 
 /* ============================================================ ADMIN LIST + MODAL */
@@ -7946,13 +7863,6 @@ function renderAdminPrayers(){
 }
 function deletePrayer(id){ if(!confirm('Delete this prayer request?'))return; STATE.prayers=STATE.prayers.filter(p=>p.id!==id); renderAdminPrayers(); renderPrayerWall(); toast('Prayer request deleted.','Removed'); }
 
-function renderAdminBudget(){
-  const el=document.getElementById('admin-budget-list'); if(!el)return;
-  el.innerHTML=STATE.budgetRequests.length===0?'<div style="padding:30px;text-align:center;color:var(--ink-mute);font-style:italic;">No budget requests yet.</div>':STATE.budgetRequests.slice().reverse().map(b=>`<div class="admin-item ${b.status==='pending'?'pending':''}"><div class="info"><h5>${escapeHtml(b.name)} — $${b.amount} <span class="status-pill ${b.status}">${b.status}</span></h5><p>${escapeHtml(b.ministry)} · "${escapeHtml((b.purpose||'').slice(0,60))}..."</p></div><div class="admin-actions">${b.status==='pending'?`<button class="icon-btn approve" onclick="approveBudget('${b.id}')">✓</button><button class="icon-btn danger" onclick="denyBudget('${b.id}')">✕</button>`:''}</div></div>`).join('');
-}
-function approveBudget(id){ const b=STATE.budgetRequests.find(x=>x.id===id); if(b){b.status='approved';renderAdminBudget();updateAdminBadges();toast('Budget approved.','Approved');} }
-function denyBudget(id){ const b=STATE.budgetRequests.find(x=>x.id===id); if(b){b.status='denied';renderAdminBudget();updateAdminBadges();toast('Budget denied.','Denied');} }
-
 function renderAdminAll(){
   document.getElementById('stat-members').textContent=STATE.members.filter(m=>m.status==='approved').length;
   document.getElementById('stat-pending').textContent=STATE.members.filter(m=>m.status==='pending').length;
@@ -7974,7 +7884,7 @@ function renderAdminAll(){
   renderAdminList('leaders',STATE.leaders,l=>({title:l.name,sub:l.position}));
   renderAdminList('services',STATE.services,s=>({title:s.name,sub:s.day+' · '+s.time}));
   renderAdminList('giving',getGivingMethods(),g=>{const bits=[g.kind||'link',(g.detail||'').trim(),g.url?'link set':'',g.qrImage?'QR ready':''].filter(Boolean);return{title:g.label||'(untitled)',sub:bits.join(' · ')};});
-  renderAdminPrayers(); renderAdminBudget(); renderAdminMembers(); updateAdminBadges();
+  renderAdminPrayers(); renderAdminMembers(); updateAdminBadges();
   renderEmailTemplates(); renderSegmentChips(); renderSentLog();
   renderImageLibrary(); renderImageLibrary('image-library-grid');
 }

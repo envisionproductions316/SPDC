@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-10-tithes-offerings" />
+<meta name="spdc-build" content="2026-10-10-givelify-link" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -5655,7 +5655,7 @@ const DEFAULT_STATE = {
   ],
   givingMethods:[
     { id:'give-cashapp', kind:'cashapp', label:'Cash App', icon:'💵', detail:'Set your $Cashtag in Admin → Giving Methods', url:'', qrImage:null },
-    { id:'give-givelify', kind:'givelify', label:'Givelify', icon:'🙏', detail:'Set your Givelify church link in Admin', url:'https://www.givelify.com/', qrImage:null },
+    { id:'give-givelify', kind:'givelify', label:'Givelify', icon:'🙏', detail:'Give online to St Pauls Deliverance Center', url:'https://www.givelify.com/donate/MTg4NTc3Nw==/selection', qrImage:null },
     { id:'give-mail', kind:'mail', label:'Mail a Gift', icon:'✉️', detail:'', url:'', qrImage:null }
   ],
   budgetRequests:[],
@@ -6704,9 +6704,10 @@ function renderServices(){
 }
 function migrateGivingMethods(){
   if(!Array.isArray(STATE.givingMethods)) STATE.givingMethods = [];
+  const GIVELIFY_URL = 'https://www.givelify.com/donate/MTg4NTc3Nw==/selection';
   const defaults = [
     { id:'give-cashapp', kind:'cashapp', label:'Cash App', icon:'💵', detail:'Set your $Cashtag in Admin → Giving Methods', url:'', qrImage:null },
-    { id:'give-givelify', kind:'givelify', label:'Givelify', icon:'🙏', detail:'Set your Givelify church link in Admin', url:'https://www.givelify.com/', qrImage:null },
+    { id:'give-givelify', kind:'givelify', label:'Givelify', icon:'🙏', detail:'Give online to St Pauls Deliverance Center', url:GIVELIFY_URL, qrImage:null },
     { id:'give-mail', kind:'mail', label:'Mail a Gift', icon:'✉️', detail:'', url:'', qrImage:null }
   ];
   if(!STATE.givingMethods.length){
@@ -6719,6 +6720,7 @@ function migrateGivingMethods(){
       STATE.givingMethods.push(Object.assign({}, d));
     }
   });
+  let patched = false;
   STATE.givingMethods.forEach(g => {
     if(!g.kind){
       const lab = String(g.label||'').toLowerCase();
@@ -6728,7 +6730,20 @@ function migrateGivingMethods(){
       else g.kind = 'link';
     }
     if(typeof g.qrImage === 'undefined') g.qrImage = null;
+    // Keep SPDC Givelify donate page linked (replace blank / homepage placeholders)
+    if(String(g.kind||'').toLowerCase()==='givelify' || String(g.id||'')==='give-givelify' || String(g.label||'').toLowerCase().includes('givelify')){
+      const u = String(g.url||'').trim();
+      if(!u || u === 'https://www.givelify.com/' || u === 'https://www.givelify.com' || !u.includes('/donate/')){
+        g.url = GIVELIFY_URL;
+        patched = true;
+      }
+      if(!String(g.detail||'').trim() || String(g.detail).includes('Set your Givelify')){
+        g.detail = 'Give online to St Pauls Deliverance Center';
+        patched = true;
+      }
+    }
   });
+  if(patched){ try { saveState(); } catch(_){} }
 }
 
 function getGivingMethods(){

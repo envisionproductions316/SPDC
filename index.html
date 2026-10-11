@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-10-giving-page" />
+<meta name="spdc-build" content="2026-10-10-tithes-offerings" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -4520,70 +4520,26 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
     <div class="container">
       <div class="section-head">
         <span class="eyebrow">A Cheerful Giver</span>
-        <h2>Sow Into Good Ground</h2>
+        <h2>Tithes &amp; Offerings</h2>
         <div class="divider"><span>✦</span></div>
         <p id="givingIntro">"Bring ye all the tithes into the storehouse... and prove me now herewith, saith the Lord of hosts, if I will not open you the windows of heaven." — Malachi 3:10</p>
       </div>
 
       <div class="section-head" style="margin-bottom:28px;">
         <span class="eyebrow" style="display:block;margin-bottom:10px;">Ways to Give</span>
-        <p style="max-width:720px;margin:0 auto;color:var(--text-on-dark-soft);font-size:17px;line-height:1.65;">Give through Cash App, Givelify, or by mail. Scan a QR code with your phone, or open the link. Update handles and QR images anytime in Admin → Giving Methods.</p>
+        <p style="max-width:720px;margin:0 auto;color:var(--text-on-dark-soft);font-size:17px;line-height:1.65;">Give through Cash App, Givelify, or by mail. Scan a QR code with your phone, or open the link below.</p>
       </div>
 
       <div class="give-methods-grid" id="give-methods-list"></div>
       <div class="give-mail-box" id="give-mail-box" style="display:none;"></div>
 
-      <div class="giving-layout" style="margin-top:40px;">
-        <div class="give-card">
-          <h3>Choose Amount &amp; Purpose</h3>
-          <p style="color:var(--text-on-dark-soft);font-size:15px;margin:-8px 0 20px;line-height:1.55;">Optional helper — pick an amount, then continue to Cash App or Givelify.</p>
-          <span class="give-label">Select Amount</span>
-          <div class="amount-grid">
-            <button class="amount-btn" data-amount="25">$25</button>
-            <button class="amount-btn" data-amount="50">$50</button>
-            <button class="amount-btn" data-amount="100">$100</button>
-            <button class="amount-btn" data-amount="250">$250</button>
-          </div>
-          <span class="give-label">Or Enter Custom Amount</span>
-          <input type="number" class="give-input" id="customAmount" placeholder="$ Other amount" min="1" />
-          <span class="give-label">Purpose</span>
-          <select class="give-select" id="givePurpose">
-            <option>Tithes</option>
-            <option>Offerings</option>
-            <option>Missions</option>
-            <option>Building Fund</option>
-            <option>Benevolence</option>
-            <option>Youth Ministry</option>
-          </select>
-          <span class="give-label">Frequency</span>
-          <select class="give-select" id="giveFreq">
-            <option>One-time</option>
-            <option>Weekly</option>
-            <option>Bi-weekly</option>
-            <option>Monthly</option>
-          </select>
-          <span class="give-label">Your Name (Optional)</span>
-          <input type="text" class="give-input" id="giverName" placeholder="Anonymous" />
-          <span class="give-label">Email (For Receipt)</span>
-          <input type="email" class="give-input" id="giverEmail" placeholder="you@example.com" />
-          <span class="give-label">Open With</span>
-          <select class="give-select" id="giveMethodChoice">
-            <option value="auto">Best available (Cash App / Givelify)</option>
-            <option value="cashapp">Cash App</option>
-            <option value="givelify">Givelify</option>
-          </select>
-          <button class="give-submit" onclick="processGift()">Continue to Give →</button>
-        </div>
-
-        <div class="give-side">
-          <h3>Thank You</h3>
-          <p>Every seed sown advances the Kingdom — reaching the lost, training disciples, and ministering to those in need.</p>
-          <p>Mail checks or money orders to the church address shown above. For QR codes, open Admin → Giving Methods, edit Cash App or Givelify, and upload your QR image.</p>
-          <div style="margin-top:30px;padding:22px;background:rgba(255,248,225,0.06);border-radius:14px;border:1px solid rgba(244,197,66,0.25);">
-            <strong style="color:var(--accent);font-family:'Cinzel',serif;font-size:14px;letter-spacing:0.12em;">📋 BUDGET REQUEST</strong>
-            <p style="font-size:14px;color:var(--text-on-dark-soft);margin-top:8px;margin-bottom:14px;">Ministry leaders, submit funding requests through our request portal.</p>
-            <button class="btn-primary" onclick="goPage('budget')" style="font-size:13px;padding:11px 20px;">Submit Request →</button>
-          </div>
+      <div class="give-side" style="margin-top:40px;max-width:720px;margin-left:auto;margin-right:auto;text-align:center;">
+        <h3>Thank You</h3>
+        <p>Every seed sown advances the Kingdom — reaching the lost, training disciples, and ministering to those in need.</p>
+        <div style="margin-top:28px;padding:22px;background:rgba(255,248,225,0.06);border-radius:14px;border:1px solid rgba(244,197,66,0.25);text-align:left;">
+          <strong style="color:var(--accent);font-family:'Cinzel',serif;font-size:14px;letter-spacing:0.12em;">BUDGET REQUEST</strong>
+          <p style="font-size:14px;color:var(--text-on-dark-soft);margin-top:8px;margin-bottom:14px;">Ministry leaders, submit funding requests through our request portal.</p>
+          <button class="btn-primary" onclick="goPage('budget')" style="font-size:13px;padding:11px 20px;">Submit Request →</button>
         </div>
       </div>
     </div>
@@ -7072,31 +7028,6 @@ function submitPrayer(e){ e.preventDefault(); const fd=new FormData(e.target); S
 function prayForRequest(id){ const p=STATE.prayers.find(x=>x.id===id); if(!p)return; p.prays=(p.prays||0)+1; renderPrayerWall(); toast('🕊 Standing in agreement.','Prayer Lifted'); }
 function rsvpEvent(id){ if(!STATE.currentUser){toast('Sign in to RSVP for events.','Login Required',true);goPage('login');return;} let ev=STATE.events.find(e=>e.id===id); if(!ev){ const site=SITE_EVENTS.find(e=>e.id===id); if(!site)return; ev=Object.assign({}, site, { rsvps:[] }); STATE.events.push(ev);} ev.rsvps=ev.rsvps||[]; const mi=ev.rsvps.indexOf(STATE.currentUser.id); if(mi>=0){ev.rsvps.splice(mi,1);toast(`RSVP cancelled for "${ev.title}".`,'RSVP Removed');}else{ev.rsvps.push(STATE.currentUser.id);toast(`You're going to "${ev.title}"! 🎉`,'RSVP Confirmed');} saveState(); renderEvents(); renderMemberAll(); }
 function subscribeNewsletter(e){ e.preventDefault(); const fd=new FormData(e.target); const email=fd.get('email').trim().toLowerCase(); if(STATE.newsletterSubs.includes(email)){toast("You're already subscribed!",'Welcome Back');}else{STATE.newsletterSubs.push(email);toast(`Thanks for subscribing!`,'Subscribed!');} e.target.reset(); }
-function processGift(){
-  const amt=parseFloat(document.getElementById('customAmount').value)||parseFloat(document.querySelector('.amount-btn.active')?.dataset.amount||0);
-  if(!amt||amt<=0){toast('Please enter a valid amount.','Amount Required',true);return;}
-  const purpose=document.getElementById('givePurpose').value;
-  const freq=document.getElementById('giveFreq').value;
-  const choice=(document.getElementById('giveMethodChoice')||{}).value||'auto';
-  migrateGivingMethods();
-  const methods=getGivingMethods().filter(g=>g.url&&String(g.kind||'')!=='mail');
-  let target=null;
-  if(choice==='cashapp') target=methods.find(g=>g.kind==='cashapp');
-  else if(choice==='givelify') target=methods.find(g=>g.kind==='givelify');
-  if(!target) target=methods.find(g=>g.kind==='cashapp'&&g.url) || methods.find(g=>g.kind==='givelify'&&g.url) || methods[0];
-  if(STATE.currentUser){
-    STATE.givingHistory.push({memberId:STATE.currentUser.id,date:new Date().toISOString().slice(0,10),amount:amt,purpose,frequency:freq});
-    saveState();
-  }
-  if(target && target.url){
-    toast(`Thank you for your $${amt} ${purpose.toLowerCase()} commitment. Opening ${target.label}…`,'God Bless You');
-    try { window.open(target.url, '_blank', 'noopener'); } catch(_){}
-  } else {
-    toast('Thank you! Add your Cash App or Givelify link in Admin → Giving Methods (and upload QR codes). Mail gifts to the church address on this page.','God Bless You');
-  }
-  document.getElementById('customAmount').value='';
-  document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('active'));
-}
 function submitBudget(e){ e.preventDefault(); const fd=new FormData(e.target); STATE.budgetRequests.push({id:uid('b'),name:fd.get('name'),email:fd.get('email'),ministry:fd.get('ministry'),amount:parseFloat(fd.get('amount')),purpose:fd.get('purpose'),needBy:fd.get('needBy'),submitted:new Date().toISOString().slice(0,10),status:'pending'}); e.target.reset(); renderAdminBudget(); updateAdminBadges(); toast('Budget request submitted.','Submitted'); }
 
 /* ============================================================ MEMBER PORTAL */
@@ -7344,7 +7275,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('drawer-overlay').addEventListener('click',toggleMobile);
   document.querySelectorAll('.admin-tab-btn[data-tab]').forEach(b=>b.addEventListener('click',()=>switchAdminTab(b.dataset.tab)));
   document.querySelectorAll('.member-tab-btn[data-tab]').forEach(b=>b.addEventListener('click',()=>switchMemberTab(b.dataset.tab)));
-  document.querySelectorAll('.amount-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('customAmount').value=btn.dataset.amount;}));
 
   window.addEventListener('scroll',()=>document.querySelector('nav.main').classList.toggle('scrolled',window.scrollY>30));
   document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});

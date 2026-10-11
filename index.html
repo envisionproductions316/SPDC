@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-11-cashapp-spdcenter" />
+<meta name="spdc-build" content="2026-10-11-leadership-switch" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -848,6 +848,7 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: opacity .35s var(--ease), transform .35s var(--ease);
 }
 .leader-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .leader-portrait .placeholder {
@@ -856,13 +857,13 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
   padding: 30px;
 }
 .leader-portrait .placeholder .ring {
-  width: 140px; height: 140px;
+  width: 160px; height: 160px;
   border-radius: 50%;
   background: var(--grad-gold);
-  margin: 0 auto 20px;
+  margin: 0 auto;
   display: flex; align-items: center; justify-content: center;
   font-family: 'Cinzel', serif;
-  font-size: 48px;
+  font-size: 52px;
   font-weight: 700;
   color: var(--primary-dark);
   box-shadow: var(--shadow-gold);
@@ -875,6 +876,7 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
   color: var(--accent-deep);
   font-weight: 700;
   margin-bottom: 14px;
+  min-height: 1.2em;
 }
 .leader-info h2 { margin-bottom: 20px; }
 .leader-info .verse-quote {
@@ -887,30 +889,43 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
   margin-bottom: 24px;
   line-height: 1.5;
 }
+.leader-info .verse-quote:empty,
+.leader-info p:empty { display: none; }
 .leader-info p { font-size: 18px; color: var(--ink); margin-bottom: 18px; }
+.leader-feature.is-switching .leader-portrait,
+.leader-feature.is-switching .leader-info {
+  opacity: 0.35;
+  transform: translateY(6px);
+}
 
 .leader-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px 40px;
+  margin-top: 8px;
 }
-.leader-card {
-  background: white;
-  border-radius: var(--r-lg);
-  padding: 32px 24px;
+.leader-pick {
+  appearance: none;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 8px 10px;
   text-align: center;
-  box-shadow: var(--shadow-card);
-  border: 1px solid var(--border-soft);
-  transition: transform .4s var(--ease), box-shadow .4s, border-color .4s;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  transition: transform .3s var(--ease);
 }
-.leader-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 24px 50px -16px rgba(13, 42, 107, 0.25);
-  border-color: var(--accent);
+.leader-pick:hover { transform: translateY(-4px); }
+.leader-pick:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 12px;
 }
-.leader-card .avatar {
-  width: 90px; height: 90px;
-  margin: 0 auto 18px;
+.leader-pick .avatar {
+  width: 96px; height: 96px;
+  margin: 0 auto 12px;
   border-radius: 50%;
   background: var(--grad-royal);
   color: var(--accent-light);
@@ -918,20 +933,27 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
   font-family: 'Cinzel', serif;
   font-size: 28px;
   font-weight: 700;
-  border: 3px solid var(--accent);
+  border: 3px solid rgba(13, 42, 107, 0.18);
   overflow: hidden;
   box-shadow: var(--shadow-soft);
+  transition: border-color .3s, box-shadow .3s, transform .3s;
 }
-.leader-card .avatar img { width: 100%; height: 100%; object-fit: cover; }
-.leader-card h4 { font-size: 18px; margin-bottom: 6px; }
-.leader-card .position {
-  font-family: 'Inter Tight', sans-serif;
-  font-size: 12px;
-  color: var(--accent-deep);
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-weight: 700;
+.leader-pick .avatar img { width: 100%; height: 100%; object-fit: cover; }
+.leader-pick .name {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  color: var(--primary-dark);
+  letter-spacing: .02em;
+  line-height: 1.3;
+  max-width: 11em;
+  margin: 0 auto;
 }
+.leader-pick.active .avatar {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(244, 197, 66, 0.35), var(--shadow-gold);
+  transform: scale(1.04);
+}
+.leader-pick.active .name { color: var(--accent-deep); }
 
 /* ============================================================
    SERMONS
@@ -4559,16 +4581,14 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
         <p>Servant-hearted leaders committed to shepherding our church family.</p>
       </div>
 
-      <div class="leader-feature">
+      <div class="leader-feature" id="leader-feature">
         <div class="leader-portrait" id="pastor-portrait">
           <div class="placeholder">
-            <div class="ring">MM</div>
-            <div style="font-family:'Cinzel',serif;font-size:20px;color:var(--accent-light);">Pastor Maurice McCormick</div>
-            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--text-on-dark-soft);margin-top:6px;font-size:15px;">Senior Pastor</div>
+            <div class="ring" id="leaderSpotlightInitials">MM</div>
           </div>
         </div>
         <div class="leader-info">
-          <div class="role">Senior Pastor &amp; Visionary Leader</div>
+          <div class="role" id="leaderSpotlightRole">Senior Pastor &amp; Visionary Leader</div>
           <h2 id="pastorName">Pastor Maurice McCormick</h2>
           <div class="verse-quote" id="pastorVerse">"For the kingdom of God is not in word, but in power." — 1 Corinthians 4:20</div>
           <p id="pastorBio1">Pastor Maurice McCormick is the founding shepherd of St. Pauls Deliverance Center, called by God to lead a people into deep relationship with Jesus Christ and bold demonstration of His power.</p>
@@ -4576,7 +4596,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
         </div>
       </div>
 
-      <div class="leader-grid" id="leaderGrid"></div>
+      <div class="leader-grid" id="leaderGrid" aria-label="Choose a leader"></div>
     </div>
   </section>
 </section>
@@ -5502,7 +5522,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
         <!-- LEADERS -->
         <div class="admin-tab" data-content="leaders">
           <div class="admin-toolbar">
-            <div><h2>Leadership Team</h2><p class="sub">Manage your leadership directory.</p></div>
+            <div><h2>Leadership Team</h2><p class="sub">Add leaders, photos, verse, and bio — clicking a name on the Leadership page switches the spotlight.</p></div>
             <button class="add-btn" onclick="openAddModal('leader')">+ Add Leader</button>
           </div>
           <div class="admin-list" id="admin-leaders-list"></div>
@@ -5837,7 +5857,42 @@ const DEFAULT_STATE = {
   events:[],
   flyers:[],
   prayers:[],
-  leaders:[],
+  leaders:[
+    {
+      id:'ldr-maurice',
+      name:'Pastor Maurice McCormick',
+      position:'Pastor',
+      roleLabel:'Senior Pastor & Visionary Leader',
+      initials:'MM',
+      verse:'"For the kingdom of God is not in word, but in power." — 1 Corinthians 4:20',
+      bio1:'Pastor Maurice McCormick is the founding shepherd of St. Pauls Deliverance Center, called by God to lead a people into deep relationship with Jesus Christ.',
+      bio2:'With a heart for the broken, the lost, and the hungry, Pastor McCormick ministers the Word with clarity, conviction, and compassion.',
+      image:null
+    },
+    {
+      id:'ldr-mary',
+      name:'Mary McCormick',
+      position:'Evangelist',
+      roleLabel:'Evangelist',
+      initials:'MM',
+      verse:'',
+      bio1:'',
+      bio2:'',
+      image:null
+    },
+    {
+      id:'ldr-lakecia',
+      name:'Lakecia Minus',
+      position:'Evangelist',
+      roleLabel:'Evangelist',
+      initials:'LM',
+      verse:'',
+      bio1:'',
+      bio2:'',
+      image:null
+    }
+  ],
+  selectedLeaderId:'ldr-maurice',
   services:[
     { id:'sv1', day:'Sunday', time:'10:00 AM', name:'Sunday School', desc:'Foundations of faith for all ages.', icon:'📖' },
     { id:'sv2', day:'Sunday', time:'11:00 AM', name:'Worship Service', desc:'Praise, the Word, and ministry — encounter the presence of God.', icon:'☀️' },
@@ -6826,7 +6881,13 @@ function resetSign(){ applySignImage(DEFAULT_SIGN); toast('Hero image reset.','R
 /* ============================================================ TEXTS / SETTINGS */
 function loadTextsIntoEditor(){ Object.keys(STATE.texts).forEach(k=>{const el=document.getElementById('edit-'+k);if(el)el.value=STATE.texts[k];}); }
 function saveTexts(){ Object.keys(STATE.texts).forEach(k=>{const el=document.getElementById('edit-'+k);if(el)STATE.texts[k]=el.value;}); renderTexts(); toast('Text saved.','Saved'); }
-function renderTexts(){ Object.keys(STATE.texts).forEach(k=>{const el=document.getElementById(k);if(el)el.textContent=STATE.texts[k];}); }
+function renderTexts(){
+  const leaderOwned = new Set(['pastorVerse','pastorBio1','pastorBio2']);
+  Object.keys(STATE.texts).forEach(k=>{
+    if(leaderOwned.has(k) && Array.isArray(STATE.leaders) && STATE.leaders.length) return;
+    const el=document.getElementById(k); if(el) el.textContent=STATE.texts[k];
+  });
+}
 function loadSettingsIntoEditor(){ const s=STATE.settings; ['churchName','abbrev','bannerVerse','contactEmail','address','phone','domain'].forEach(k=>{const el=document.getElementById('edit-'+k);if(el)el.value=s[k]||'';}); const cb=document.getElementById('setting-require-approval'); if(cb)cb.checked=s.requireApproval; }
 function saveSettings(){ const s=STATE.settings; ['churchName','abbrev','bannerVerse','contactEmail','address','phone','domain'].forEach(k=>{const el=document.getElementById('edit-'+k);if(el)s[k]=el.value.trim();}); const cb=document.getElementById('setting-require-approval'); if(cb)s.requireApproval=cb.checked; renderSettings(); toast('Settings saved.','Saved'); }
 function renderSettings(){
@@ -6882,10 +6943,110 @@ function renderFlyers(){
     <div class="content"><h4>${f.title}</h4><div class="subtitle">${f.subtitle}</div><div class="when">${f.when}</div></div>
   </div><div class="meta"><h5>${escapeHtml(f.title)}</h5><p>${escapeHtml(f.description)}</p></div></div>`).join('');
 }
+function migrateLeaders(){
+  if(!Array.isArray(STATE.leaders)) STATE.leaders = [];
+  if(!STATE.leaders.length){
+    STATE.leaders = JSON.parse(JSON.stringify(DEFAULT_STATE.leaders));
+    STATE.selectedLeaderId = DEFAULT_STATE.selectedLeaderId;
+    try { saveState(); } catch(_){}
+    return;
+  }
+  let patched = false;
+  STATE.leaders.forEach((l, i) => {
+    if(typeof l.roleLabel === 'undefined'){ l.roleLabel = l.position || ''; patched = true; }
+    if(typeof l.verse === 'undefined'){
+      l.verse = (i===0 && STATE.texts && STATE.texts.pastorVerse) ? STATE.texts.pastorVerse : '';
+      patched = true;
+    }
+    if(typeof l.bio1 === 'undefined'){
+      l.bio1 = (i===0 && STATE.texts && STATE.texts.pastorBio1) ? STATE.texts.pastorBio1 : '';
+      patched = true;
+    }
+    if(typeof l.bio2 === 'undefined'){
+      l.bio2 = (i===0 && STATE.texts && STATE.texts.pastorBio2) ? STATE.texts.pastorBio2 : '';
+      patched = true;
+    }
+    if(typeof l.image === 'undefined'){ l.image = null; patched = true; }
+    if(!l.initials){ l.initials = initials(l.name||''); patched = true; }
+  });
+  if(!STATE.selectedLeaderId || !STATE.leaders.some(l => l.id === STATE.selectedLeaderId)){
+    STATE.selectedLeaderId = STATE.leaders[0].id;
+    patched = true;
+  }
+  if(patched){ try { saveState(); } catch(_){} }
+}
+
+function paintLeaderSpotlight(leader){
+  if(!leader) return;
+  const portrait = document.getElementById('pastor-portrait');
+  const roleEl = document.getElementById('leaderSpotlightRole');
+  const nameEl = document.getElementById('pastorName');
+  const verseEl = document.getElementById('pastorVerse');
+  const bio1El = document.getElementById('pastorBio1');
+  const bio2El = document.getElementById('pastorBio2');
+  const displayName = (leader.name||'').trim() || 'Leader';
+  const role = (leader.roleLabel||leader.position||'').trim();
+  const verse = (leader.verse||'').trim();
+  const bio1 = (leader.bio1||'').trim();
+  const bio2 = (leader.bio2||'').trim();
+  const ini = (leader.initials||initials(displayName)||'✦').trim();
+
+  if(portrait){
+    if(leader.image){
+      portrait.innerHTML = `<img src="${escapeAttr(leader.image)}" alt="${escapeAttr(displayName)}" />`;
+    } else {
+      portrait.innerHTML = `<div class="placeholder"><div class="ring" id="leaderSpotlightInitials">${escapeHtml(ini)}</div></div>`;
+    }
+  }
+  if(roleEl) roleEl.textContent = role;
+  if(nameEl) nameEl.textContent = displayName;
+  if(verseEl) verseEl.textContent = verse;
+  if(bio1El) bio1El.textContent = bio1;
+  if(bio2El) bio2El.textContent = bio2;
+}
+
+function selectLeader(id){
+  migrateLeaders();
+  const leader = STATE.leaders.find(l => l.id === id);
+  if(!leader) return;
+  STATE.selectedLeaderId = id;
+  try { saveState(); } catch(_){}
+  const feature = document.getElementById('leader-feature');
+  if(feature){
+    feature.classList.add('is-switching');
+    setTimeout(()=>{
+      paintLeaderSpotlight(leader);
+      feature.classList.remove('is-switching');
+      renderLeaders();
+    }, 180);
+  } else {
+    paintLeaderSpotlight(leader);
+    renderLeaders();
+  }
+}
+
 function renderLeaders(){
-  const el=document.getElementById('leaderGrid'); if(!el)return;
-  if(!STATE.leaders.length){el.innerHTML='<div style="grid-column:1/-1;padding:50px;text-align:center;color:var(--ink-mute);font-style:italic;font-family:\'Inter Tight\',sans-serif;">Leadership directory coming soon.</div>';return;}
-  el.innerHTML=STATE.leaders.map(l=>`<div class="leader-card"><div class="avatar">${l.image?`<img src="${l.image}" alt="" />`:(escapeHtml(l.initials||initials(l.name)))}</div><h4>${escapeHtml(l.name)}</h4><div class="position">${escapeHtml(l.position)}</div></div>`).join('');
+  migrateLeaders();
+  const el = document.getElementById('leaderGrid');
+  if(!el) return;
+  if(!STATE.leaders.length){
+    el.innerHTML = '<div style="width:100%;padding:50px;text-align:center;color:var(--ink-mute);font-style:italic;font-family:\'Inter Tight\',sans-serif;">Leadership directory coming soon.</div>';
+    return;
+  }
+  const activeId = STATE.selectedLeaderId || STATE.leaders[0].id;
+  const active = STATE.leaders.find(l => l.id === activeId) || STATE.leaders[0];
+  paintLeaderSpotlight(active);
+  el.innerHTML = STATE.leaders.map(l => {
+    const isActive = l.id === active.id;
+    const ini = escapeHtml(l.initials || initials(l.name));
+    const avatar = l.image
+      ? `<img src="${escapeAttr(l.image)}" alt="" />`
+      : ini;
+    return `<button type="button" class="leader-pick${isActive?' active':''}" onclick="selectLeader('${escapeAttr(l.id)}')" aria-pressed="${isActive?'true':'false'}" aria-label="Show ${escapeAttr(l.name||'leader')}">
+      <div class="avatar">${avatar}</div>
+      <div class="name">${escapeHtml(l.name||'Leader')}</div>
+    </button>`;
+  }).join('');
 }
 function renderServices(){
   const el=document.getElementById('servicesList'); if(!el)return;
@@ -7323,7 +7484,7 @@ const fieldDefs={
   sermon:[{k:'title',label:'Title',type:'text'},{k:'speaker',label:'Speaker',type:'text'},{k:'date',label:'Date',type:'date'},{k:'summary',label:'Summary',type:'textarea'}],
   activity:[{k:'title',label:'Ministry Name',type:'text'},{k:'icon',label:'Emoji Icon',type:'text'},{k:'meta',label:'Schedule',type:'text'},{k:'summary',label:'Description',type:'textarea'}],
   flyer:[{k:'title',label:'Title',type:'text'},{k:'subtitle',label:'Subtitle',type:'text'},{k:'when',label:'When',type:'text'},{k:'meta',label:'Short Note',type:'text'},{k:'description',label:'Description',type:'textarea'}],
-  leader:[{k:'name',label:'Full Name',type:'text'},{k:'position',label:'Position',type:'text'},{k:'initials',label:'Initials',type:'text'}],
+  leader:[{k:'name',label:'Full Name',type:'text'},{k:'position',label:'Short title (e.g. Pastor)',type:'text'},{k:'roleLabel',label:'Spotlight role line',type:'text'},{k:'initials',label:'Initials',type:'text'},{k:'verse',label:'Verse / quote',type:'textarea'},{k:'bio1',label:'Bio paragraph 1',type:'textarea'},{k:'bio2',label:'Bio paragraph 2',type:'textarea'}],
   service:[{k:'day',label:'Day',type:'text'},{k:'time',label:'Time',type:'text'},{k:'name',label:'Service Name',type:'text'},{k:'icon',label:'Icon',type:'text'},{k:'desc',label:'Description',type:'textarea'}],
   giving:[{k:'label',label:'Method Name',type:'text'},{k:'kind',label:'Type (cashapp, givelify, mail, link)',type:'text'},{k:'detail',label:'Handle / instructions',type:'text'},{k:'icon',label:'Icon emoji',type:'text'},{k:'url',label:'Link URL (Cash App / Givelify)',type:'text'}],
   event:[{k:'title',label:'Event Title',type:'text'},{k:'date',label:'Date',type:'date'},{k:'time',label:'Time',type:'text'},{k:'location',label:'Location',type:'text'},{k:'description',label:'Description',type:'textarea'}]
@@ -7334,6 +7495,7 @@ function buildModal(type,item){
   const defs=fieldDefs[type]; document.getElementById('modal-title').textContent=(item?'Edit ':'Add ')+capitalize(type); document.getElementById('modal-sub').textContent='Fill in the fields and save.';
   eventModalImage=type==='event'&&item&&item.image?item.image:null;
   window.givingModalQr=type==='giving'&&item&&item.qrImage?item.qrImage:null;
+  window.leaderModalImage=type==='leader'&&item&&item.image?item.image:null;
   const fields=defs.map(d=>{ const v=item?(item[d.k]||''):''; return d.type==='textarea'?`<label class="field-label">${d.label}${type==='event'&&d.k==='description'?' (optional)':''}</label><textarea class="editable-field" data-key="${d.k}">${escapeHtml(v)}</textarea>`:`<label class="field-label">${d.label}</label><input class="editable-field" type="${d.type}" data-key="${d.k}" value="${escapeAttr(v)}" />`; }).join('');
   const eventPicture=type==='event'?`
     <label class="field-label">Event Picture (optional)</label>
@@ -7361,7 +7523,17 @@ function buildModal(type,item){
       </div>
       <p style="font-size:12px;color:var(--ink-mute);margin-top:9px;font-family:'Inter Tight',sans-serif;">Upload the Cash App or Givelify QR from your phone. Type <code>cashapp</code>, <code>givelify</code>, or <code>mail</code> in Type.</p>
     </div>`:'';
-  document.getElementById('modal-fields').innerHTML=fields+eventPicture+givingQr;
+  const leaderPicture=type==='leader'?`
+    <label class="field-label">Photo (optional)</label>
+    <div style="border:1px dashed var(--border-soft);border-radius:var(--r-md);padding:14px;text-align:center;">
+      <img id="leader-modal-image-preview" src="${window.leaderModalImage?escapeAttr(window.leaderModalImage):''}" alt="Leader photo preview" style="${window.leaderModalImage?'':'display:none;'}width:140px;height:140px;object-fit:cover;border-radius:50%;margin:0 auto 12px;border:3px solid var(--accent);" />
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <label class="file-btn">📷 Upload Photo<input type="file" accept="image/*" onchange="handleLeaderImageUpload(event)" /></label>
+        <button type="button" class="add-btn" id="leader-image-remove" onclick="removeLeaderModalImage()" style="${window.leaderModalImage?'':'display:none;'}">Remove Photo</button>
+      </div>
+      <p style="font-size:12px;color:var(--ink-mute);margin-top:9px;font-family:'Inter Tight',sans-serif;">Photo shows in the large spotlight and the circle picker. Leave blank to use initials. Fill verse and bio anytime — empty lines stay hidden.</p>
+    </div>`:'';
+  document.getElementById('modal-fields').innerHTML=fields+eventPicture+givingQr+leaderPicture;
   document.getElementById('modal').classList.add('active'); editingType=type; editingId=item?item.id:null;
 }
 function openAddModal(type){ buildModal(type,null); }
@@ -7403,7 +7575,26 @@ function removeGivingModalQr(){
   if(preview){preview.src='';preview.style.display='none';}
   if(remove)remove.style.display='none';
 }
-function closeModal(){ document.getElementById('modal').classList.remove('active'); editingType=null; editingId=null; eventModalImage=null; window.givingModalQr=null; }
+function handleLeaderImageUpload(e){
+  const file=e.target.files&&e.target.files[0]; if(!file)return;
+  if(!file.type.startsWith('image/')){toast('Please choose an image file.','Invalid File',true);e.target.value='';return;}
+  if(file.size>10*1024*1024){toast('Please choose an image smaller than 10MB.','Image Too Large',true);e.target.value='';return;}
+  readFileAsCompressedDataUrl(file, 1200, 0.8).then(src=>{
+    window.leaderModalImage=src;
+    const preview=document.getElementById('leader-modal-image-preview');
+    const remove=document.getElementById('leader-image-remove');
+    if(preview){preview.src=src;preview.style.display='block';}
+    if(remove)remove.style.display='';
+  }).catch(()=>toast('Could not read that photo.','Upload Failed',true));
+}
+function removeLeaderModalImage(){
+  window.leaderModalImage=null;
+  const preview=document.getElementById('leader-modal-image-preview');
+  const remove=document.getElementById('leader-image-remove');
+  if(preview){preview.src='';preview.style.display='none';}
+  if(remove)remove.style.display='none';
+}
+function closeModal(){ document.getElementById('modal').classList.remove('active'); editingType=null; editingId=null; eventModalImage=null; window.givingModalQr=null; window.leaderModalImage=null; }
 function saveModal(){
   if(!editingType)return; const map={sermon:'sermons',activity:'activities',flyer:'flyers',leader:'leaders',service:'services',giving:'givingMethods',event:'events'};
   const savedType=editingType, wasEditing=Boolean(editingId);
@@ -7411,6 +7602,12 @@ function saveModal(){
   document.querySelectorAll('#modal-fields [data-key]').forEach(input=>{newItem[input.dataset.key]=input.value.trim();});
   if(editingType==='event'){if(!newItem.rsvps)newItem.rsvps=[];newItem.image=eventModalImage;if(!newItem.location)newItem.location=(STATE.settings.address||'').trim();const ap=document.getElementById('event-approved-checkbox');newItem.approved=ap?!!ap.checked:true;if(!newItem.endDate)newItem.endDate=newItem.date||'';}
   if(editingType==='giving'){newItem.kind=String(newItem.kind||'link').toLowerCase().trim()||'link';newItem.qrImage=window.givingModalQr||null;if(newItem.kind==='mail'&&!newItem.detail)newItem.detail=(STATE.settings.address||'').trim();}
+  if(editingType==='leader'){
+    newItem.image=window.leaderModalImage||null;
+    if(!newItem.initials) newItem.initials=initials(newItem.name||'');
+    if(!newItem.roleLabel) newItem.roleLabel=newItem.position||'';
+    if(!editingId && !STATE.selectedLeaderId) STATE.selectedLeaderId=newItem.id;
+  }
   if(!editingId)STATE[arrKey].push(newItem);
   closeModal(); renderAll(); renderAdminAll(); toast(`${capitalize(savedType)} ${wasEditing?'updated':'added'}.`,'Saved');
 }

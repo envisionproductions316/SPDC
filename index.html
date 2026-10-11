@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-10-events-lifecycle" />
+<meta name="spdc-build" content="2026-10-10-giving-page" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -1628,7 +1628,97 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
 
 .give-side h3 { color: var(--accent); margin-bottom: 20px; }
 .give-side p { font-size: 17px; color: var(--text-on-dark-soft); margin-bottom: 16px; line-height: 1.7; }
+.give-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin: 8px 0 36px;
+}
+@media (max-width: 920px) {
+  .give-methods-grid { grid-template-columns: 1fr; }
+}
 .give-methods { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
+.give-method-card {
+  background: rgba(255, 248, 225, 0.07);
+  border: 1px solid rgba(244, 197, 66, 0.32);
+  border-radius: var(--r-lg);
+  padding: 22px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  min-height: 100%;
+  transition: transform .3s var(--ease), border-color .3s, background .3s;
+  text-decoration: none;
+  color: inherit;
+}
+.give-method-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  background: rgba(255, 248, 225, 0.12);
+}
+.give-method-card .gm-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: var(--grad-gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+.give-method-card strong {
+  display: block;
+  color: var(--text-on-dark);
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+}
+.give-method-card .gm-detail {
+  color: var(--text-on-dark-soft);
+  font-size: 14px;
+  line-height: 1.55;
+  min-height: 2.8em;
+}
+.give-method-card .gm-qr {
+  width: 148px;
+  height: 148px;
+  border-radius: 12px;
+  border: 1px solid rgba(244, 197, 66, 0.4);
+  background: #fffaf0;
+  object-fit: contain;
+  padding: 8px;
+}
+.give-method-card .gm-qr-placeholder {
+  width: 148px;
+  height: 148px;
+  border-radius: 12px;
+  border: 1px dashed rgba(244, 197, 66, 0.45);
+  background: rgba(255,248,225,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  color: rgba(255,248,225,0.55);
+  font-size: 12px;
+  font-family: 'Inter Tight', sans-serif;
+  letter-spacing: .04em;
+}
+.give-method-card .gm-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(244,197,66,.5);
+  color: var(--accent-light);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Inter Tight', sans-serif;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
 .give-method {
   background: rgba(255, 248, 225, 0.06);
   border: 1px solid rgba(244, 197, 66, 0.3);
@@ -1661,6 +1751,31 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
 .give-method strong { display: block; color: var(--text-on-dark); font-family: 'Cinzel', serif; font-size: 15px; margin-bottom: 4px; }
 .give-method span { color: var(--text-on-dark-soft); font-size: 14px; }
 .give-method .external { color: var(--accent); font-size: 14px; }
+.give-mail-box {
+  margin-top: 8px;
+  padding: 22px 24px;
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(244,197,66,.35);
+  background: rgba(255,248,225,.06);
+}
+.give-mail-box h4 {
+  color: var(--accent);
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.give-mail-box p {
+  color: var(--text-on-dark-soft);
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 0 0 8px;
+}
+.give-mail-box .mail-address {
+  color: var(--text-on-dark);
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
+  line-height: 1.5;
+}
 
 /* ============================================================
    BUDGET FORM
@@ -4410,9 +4525,18 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
         <p id="givingIntro">"Bring ye all the tithes into the storehouse... and prove me now herewith, saith the Lord of hosts, if I will not open you the windows of heaven." — Malachi 3:10</p>
       </div>
 
-      <div class="giving-layout">
+      <div class="section-head" style="margin-bottom:28px;">
+        <span class="eyebrow" style="display:block;margin-bottom:10px;">Ways to Give</span>
+        <p style="max-width:720px;margin:0 auto;color:var(--text-on-dark-soft);font-size:17px;line-height:1.65;">Give through Cash App, Givelify, or by mail. Scan a QR code with your phone, or open the link. Update handles and QR images anytime in Admin → Giving Methods.</p>
+      </div>
+
+      <div class="give-methods-grid" id="give-methods-list"></div>
+      <div class="give-mail-box" id="give-mail-box" style="display:none;"></div>
+
+      <div class="giving-layout" style="margin-top:40px;">
         <div class="give-card">
-          <h3>Give Securely Online</h3>
+          <h3>Choose Amount &amp; Purpose</h3>
+          <p style="color:var(--text-on-dark-soft);font-size:15px;margin:-8px 0 20px;line-height:1.55;">Optional helper — pick an amount, then continue to Cash App or Givelify.</p>
           <span class="give-label">Select Amount</span>
           <div class="amount-grid">
             <button class="amount-btn" data-amount="25">$25</button>
@@ -4442,13 +4566,19 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
           <input type="text" class="give-input" id="giverName" placeholder="Anonymous" />
           <span class="give-label">Email (For Receipt)</span>
           <input type="email" class="give-input" id="giverEmail" placeholder="you@example.com" />
-          <button class="give-submit" onclick="processGift()">Continue to Secure Payment →</button>
+          <span class="give-label">Open With</span>
+          <select class="give-select" id="giveMethodChoice">
+            <option value="auto">Best available (Cash App / Givelify)</option>
+            <option value="cashapp">Cash App</option>
+            <option value="givelify">Givelify</option>
+          </select>
+          <button class="give-submit" onclick="processGift()">Continue to Give →</button>
         </div>
 
         <div class="give-side">
-          <h3>Other Ways to Give</h3>
+          <h3>Thank You</h3>
           <p>Every seed sown advances the Kingdom — reaching the lost, training disciples, and ministering to those in need.</p>
-          <div class="give-methods" id="give-methods-list"></div>
+          <p>Mail checks or money orders to the church address shown above. For QR codes, open Admin → Giving Methods, edit Cash App or Givelify, and upload your QR image.</p>
           <div style="margin-top:30px;padding:22px;background:rgba(255,248,225,0.06);border-radius:14px;border:1px solid rgba(244,197,66,0.25);">
             <strong style="color:var(--accent);font-family:'Cinzel',serif;font-size:14px;letter-spacing:0.12em;">📋 BUDGET REQUEST</strong>
             <p style="font-size:14px;color:var(--text-on-dark-soft);margin-top:8px;margin-bottom:14px;">Ministry leaders, submit funding requests through our request portal.</p>
@@ -5252,9 +5382,10 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
         <!-- GIVING -->
         <div class="admin-tab" data-content="giving">
           <div class="admin-toolbar">
-            <div><h2>Giving Methods</h2><p class="sub">Cash App, Zelle, PayPal — real URLs.</p></div>
+            <div><h2>Giving Methods</h2><p class="sub">Cash App, Givelify, mail address, and QR codes for the Give page.</p></div>
             <button class="add-btn" onclick="openAddModal('giving')">+ Add Method</button>
           </div>
+          <p style="font-size:13px;color:var(--ink-mute);font-family:'Inter Tight',sans-serif;margin:-6px 0 14px;">Tip: Edit Cash App / Givelify to set your real $cashtag or Givelify link, then upload each QR code image. Mail uses the church address from Settings unless you override the detail.</p>
           <div class="admin-list" id="admin-giving-list"></div>
         </div>
 
@@ -5566,7 +5697,11 @@ const DEFAULT_STATE = {
     { id:'sv2', day:'Sunday', time:'11:00 AM', name:'Worship Service', desc:'Praise, the Word, and ministry — encounter the presence of God.', icon:'☀️' },
     { id:'sv3', day:'Wednesday', time:'7:00 PM', name:'Bible Study', desc:'Deep dive into Scripture and corporate prayer.', icon:'🔥' }
   ],
-  givingMethods:[],
+  givingMethods:[
+    { id:'give-cashapp', kind:'cashapp', label:'Cash App', icon:'💵', detail:'Set your $Cashtag in Admin → Giving Methods', url:'', qrImage:null },
+    { id:'give-givelify', kind:'givelify', label:'Givelify', icon:'🙏', detail:'Set your Givelify church link in Admin', url:'https://www.givelify.com/', qrImage:null },
+    { id:'give-mail', kind:'mail', label:'Mail a Gift', icon:'✉️', detail:'', url:'', qrImage:null }
+  ],
   budgetRequests:[],
   emailCampaigns:[],
   members:[
@@ -6611,11 +6746,93 @@ function renderServices(){
   if(!STATE.services.length){el.innerHTML='<div style="grid-column:1/-1;padding:50px;text-align:center;color:var(--ink-mute);font-style:italic;font-family:\'Inter Tight\',sans-serif;">Service times will be posted here soon.</div>';return;}
   el.innerHTML=STATE.services.map(s=>`<div class="service-card"><div class="icon">${s.icon||'✦'}</div><div class="day">${escapeHtml(s.day)}</div><h3>${escapeHtml(s.name)}</h3><div class="time">${escapeHtml(s.time)}</div><p>${escapeHtml(s.desc)}</p></div>`).join('');
 }
-function renderGivingMethods(){
-  const el=document.getElementById('give-methods-list'); if(!el)return;
-  if(!STATE.givingMethods.length){el.innerHTML='<div style="padding:30px;text-align:center;color:var(--ink-mute);font-style:italic;font-family:\'Inter Tight\',sans-serif;">Giving options will appear here once the church adds Cash App, Zelle, PayPal, or mail details in the admin panel.</div>';return;}
-  el.innerHTML=STATE.givingMethods.map(g=>{ const isLink=g.url&&(g.url.startsWith('http')||g.url.startsWith('mailto:')); const tag=isLink?'a':'div'; const attrs=isLink?`href="${escapeAttr(g.url)}" target="_blank" rel="noopener"`:''; return `<${tag} class="give-method" ${attrs}><div class="gm-icon">${escapeHtml(g.icon)}</div><div class="gm-content"><strong>${escapeHtml(g.label)}</strong><span>${escapeHtml(g.detail)}</span></div>${isLink?'<span class="external">↗</span>':''}</${tag}>`; }).join('');
+function migrateGivingMethods(){
+  if(!Array.isArray(STATE.givingMethods)) STATE.givingMethods = [];
+  const defaults = [
+    { id:'give-cashapp', kind:'cashapp', label:'Cash App', icon:'💵', detail:'Set your $Cashtag in Admin → Giving Methods', url:'', qrImage:null },
+    { id:'give-givelify', kind:'givelify', label:'Givelify', icon:'🙏', detail:'Set your Givelify church link in Admin', url:'https://www.givelify.com/', qrImage:null },
+    { id:'give-mail', kind:'mail', label:'Mail a Gift', icon:'✉️', detail:'', url:'', qrImage:null }
+  ];
+  if(!STATE.givingMethods.length){
+    STATE.givingMethods = defaults.map(d => Object.assign({}, d));
+    return;
+  }
+  // Ensure core methods exist so the Give page always has Cash App / Givelify / Mail slots
+  defaults.forEach(d => {
+    if(!STATE.givingMethods.some(g => g.id === d.id || String(g.kind||'').toLowerCase() === d.kind)){
+      STATE.givingMethods.push(Object.assign({}, d));
+    }
+  });
+  STATE.givingMethods.forEach(g => {
+    if(!g.kind){
+      const lab = String(g.label||'').toLowerCase();
+      if(lab.includes('cash')) g.kind = 'cashapp';
+      else if(lab.includes('givelify')) g.kind = 'givelify';
+      else if(lab.includes('mail') || lab.includes('check') || lab.includes('address')) g.kind = 'mail';
+      else g.kind = 'link';
+    }
+    if(typeof g.qrImage === 'undefined') g.qrImage = null;
+  });
 }
+
+function getGivingMethods(){
+  migrateGivingMethods();
+  return (STATE.givingMethods || []).filter(g => g && (g.label || g.detail || g.url || g.qrImage));
+}
+
+function renderGivingMethods(){
+  migrateGivingMethods();
+  const el = document.getElementById('give-methods-list');
+  const mailBox = document.getElementById('give-mail-box');
+  if(!el) return;
+  const methods = getGivingMethods();
+  const online = methods.filter(g => String(g.kind||'') !== 'mail');
+  const mail = methods.filter(g => String(g.kind||'') === 'mail');
+  const address = (STATE.settings && STATE.settings.address) ? STATE.settings.address : '1291 W Broad St, St Pauls, NC 28384';
+
+  if(!online.length && !mail.length){
+    el.innerHTML = '<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text-on-dark-soft);font-style:italic;">Add Cash App, Givelify, or mail details in Admin → Giving Methods.</div>';
+  } else {
+    el.innerHTML = online.map(g => {
+      const kind = String(g.kind||'link').toLowerCase();
+      const url = (g.url||'').trim();
+      const isLink = url && (url.startsWith('http') || url.startsWith('mailto:') || url.startsWith('cashapp://'));
+      const detail = (g.detail||'').trim() || (kind==='cashapp' ? 'Open Cash App to give' : kind==='givelify' ? 'Give securely with Givelify' : 'Tap to give');
+      const qr = (g.qrImage||'').trim();
+      const qrHtml = qr
+        ? `<img class="gm-qr" src="${escapeAttr(qr)}" alt="${escapeAttr(g.label||'Giving')} QR code" />`
+        : `<div class="gm-qr-placeholder"><span style="font-size:22px;">▦</span><span>QR ready in Admin</span></div>`;
+      const cta = kind==='cashapp' ? 'Open Cash App' : kind==='givelify' ? 'Open Givelify' : (isLink ? 'Open link' : 'Details');
+      const inner = `
+        <div class="gm-icon">${escapeHtml(g.icon||'✦')}</div>
+        <strong>${escapeHtml(g.label||'Give')}</strong>
+        <div class="gm-detail">${escapeHtml(detail)}</div>
+        ${qrHtml}
+        <span class="gm-cta">${escapeHtml(cta)} ${isLink?'↗':''}</span>`;
+      if(isLink){
+        return `<a class="give-method-card" href="${escapeAttr(url)}" target="_blank" rel="noopener">${inner}</a>`;
+      }
+      return `<div class="give-method-card">${inner}</div>`;
+    }).join('');
+  }
+
+  if(mailBox){
+    if(!mail.length){
+      mailBox.style.display = 'none';
+      mailBox.innerHTML = '';
+    } else {
+      const m = mail[0];
+      const detail = (m.detail||'').trim() || address;
+      mailBox.style.display = '';
+      mailBox.innerHTML = `
+        <h4>${escapeHtml(m.icon||'✉️')} ${escapeHtml(m.label||'Mail a Gift')}</h4>
+        <p>Mail checks, money orders, or donation letters to the church office:</p>
+        <div class="mail-address">${escapeHtml(detail)}</div>
+        <p style="margin-top:12px;">Please include your name and whether the gift is for tithes, offerings, missions, or another purpose.</p>`;
+    }
+  }
+}
+
 function eventCardHtml(e, idx, {past=false}={}){
   const rsvped=STATE.currentUser&&Array.isArray(e.rsvps)&&e.rsvps.includes(STATE.currentUser.id);
   const title=e.title||'Untitled Event';
@@ -6860,17 +7077,22 @@ function processGift(){
   if(!amt||amt<=0){toast('Please enter a valid amount.','Amount Required',true);return;}
   const purpose=document.getElementById('givePurpose').value;
   const freq=document.getElementById('giveFreq').value;
-  const methods=(STATE.givingMethods||[]).filter(g=>g.url);
+  const choice=(document.getElementById('giveMethodChoice')||{}).value||'auto';
+  migrateGivingMethods();
+  const methods=getGivingMethods().filter(g=>g.url&&String(g.kind||'')!=='mail');
+  let target=null;
+  if(choice==='cashapp') target=methods.find(g=>g.kind==='cashapp');
+  else if(choice==='givelify') target=methods.find(g=>g.kind==='givelify');
+  if(!target) target=methods.find(g=>g.kind==='cashapp'&&g.url) || methods.find(g=>g.kind==='givelify'&&g.url) || methods[0];
   if(STATE.currentUser){
     STATE.givingHistory.push({memberId:STATE.currentUser.id,date:new Date().toISOString().slice(0,10),amount:amt,purpose,frequency:freq});
     saveState();
   }
-  if(methods.length){
-    const first=methods[0];
-    toast(`Thank you for your $${amt} ${purpose.toLowerCase()} commitment. Opening ${first.label}…`,'God Bless You');
-    try { window.open(first.url, '_blank', 'noopener'); } catch(_){}
+  if(target && target.url){
+    toast(`Thank you for your $${amt} ${purpose.toLowerCase()} commitment. Opening ${target.label}…`,'God Bless You');
+    try { window.open(target.url, '_blank', 'noopener'); } catch(_){}
   } else {
-    toast('Thank you! Giving links are not set up yet — please give in person or ask the church office for Cash App, Zelle, or PayPal details.','God Bless You');
+    toast('Thank you! Add your Cash App or Givelify link in Admin → Giving Methods (and upload QR codes). Mail gifts to the church address on this page.','God Bless You');
   }
   document.getElementById('customAmount').value='';
   document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('active'));
@@ -6924,7 +7146,7 @@ const fieldDefs={
   flyer:[{k:'title',label:'Title',type:'text'},{k:'subtitle',label:'Subtitle',type:'text'},{k:'when',label:'When',type:'text'},{k:'meta',label:'Short Note',type:'text'},{k:'description',label:'Description',type:'textarea'}],
   leader:[{k:'name',label:'Full Name',type:'text'},{k:'position',label:'Position',type:'text'},{k:'initials',label:'Initials',type:'text'}],
   service:[{k:'day',label:'Day',type:'text'},{k:'time',label:'Time',type:'text'},{k:'name',label:'Service Name',type:'text'},{k:'icon',label:'Icon',type:'text'},{k:'desc',label:'Description',type:'textarea'}],
-  giving:[{k:'label',label:'Method Name',type:'text'},{k:'detail',label:'Handle/Detail',type:'text'},{k:'icon',label:'Icon',type:'text'},{k:'url',label:'URL',type:'text'}],
+  giving:[{k:'label',label:'Method Name',type:'text'},{k:'kind',label:'Type (cashapp, givelify, mail, link)',type:'text'},{k:'detail',label:'Handle / instructions',type:'text'},{k:'icon',label:'Icon emoji',type:'text'},{k:'url',label:'Link URL (Cash App / Givelify)',type:'text'}],
   event:[{k:'title',label:'Event Title',type:'text'},{k:'date',label:'Date',type:'date'},{k:'time',label:'Time',type:'text'},{k:'location',label:'Location',type:'text'},{k:'description',label:'Description',type:'textarea'}]
 };
 let editingType=null,editingId=null,eventModalImage=null;
@@ -6932,6 +7154,7 @@ let editingType=null,editingId=null,eventModalImage=null;
 function buildModal(type,item){
   const defs=fieldDefs[type]; document.getElementById('modal-title').textContent=(item?'Edit ':'Add ')+capitalize(type); document.getElementById('modal-sub').textContent='Fill in the fields and save.';
   eventModalImage=type==='event'&&item&&item.image?item.image:null;
+  window.givingModalQr=type==='giving'&&item&&item.qrImage?item.qrImage:null;
   const fields=defs.map(d=>{ const v=item?(item[d.k]||''):''; return d.type==='textarea'?`<label class="field-label">${d.label}${type==='event'&&d.k==='description'?' (optional)':''}</label><textarea class="editable-field" data-key="${d.k}">${escapeHtml(v)}</textarea>`:`<label class="field-label">${d.label}</label><input class="editable-field" type="${d.type}" data-key="${d.k}" value="${escapeAttr(v)}" />`; }).join('');
   const eventPicture=type==='event'?`
     <label class="field-label">Event Picture (optional)</label>
@@ -6949,7 +7172,17 @@ function buildModal(type,item){
     </label>
     <label class="field-label">End date (optional — for multi-day events)</label>
     <input class="editable-field" type="date" data-key="endDate" value="${escapeAttr(item&&item.endDate?item.endDate:'')}" />`:'';
-  document.getElementById('modal-fields').innerHTML=fields+eventPicture;
+  const givingQr=type==='giving'?`
+    <label class="field-label">QR Code Image (optional)</label>
+    <div style="border:1px dashed var(--border-soft);border-radius:var(--r-md);padding:14px;text-align:center;">
+      <img id="giving-qr-preview" src="${window.givingModalQr?escapeAttr(window.givingModalQr):''}" alt="QR preview" style="${window.givingModalQr?'':'display:none;'}width:160px;height:160px;object-fit:contain;border-radius:10px;margin:0 auto 12px;background:#fff;border:1px solid var(--border-soft);" />
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <label class="file-btn">▦ Upload QR<input type="file" accept="image/*" onchange="handleGivingQrUpload(event)" /></label>
+        <button type="button" class="add-btn" id="giving-qr-remove" onclick="removeGivingModalQr()" style="${window.givingModalQr?'':'display:none;'}">Remove QR</button>
+      </div>
+      <p style="font-size:12px;color:var(--ink-mute);margin-top:9px;font-family:'Inter Tight',sans-serif;">Upload the Cash App or Givelify QR from your phone. Type <code>cashapp</code>, <code>givelify</code>, or <code>mail</code> in Type.</p>
+    </div>`:'';
+  document.getElementById('modal-fields').innerHTML=fields+eventPicture+givingQr;
   document.getElementById('modal').classList.add('active'); editingType=type; editingId=item?item.id:null;
 }
 function openAddModal(type){ buildModal(type,null); }
@@ -6973,13 +7206,32 @@ function removeEventModalImage(){
   if(preview){preview.src='';preview.style.display='none';}
   if(remove)remove.style.display='none';
 }
-function closeModal(){ document.getElementById('modal').classList.remove('active'); editingType=null; editingId=null; eventModalImage=null; }
+function handleGivingQrUpload(e){
+  const file=e.target.files&&e.target.files[0]; if(!file)return;
+  if(!file.type.startsWith('image/')){toast('Please choose an image file.','Invalid File',true);e.target.value='';return;}
+  readFileAsCompressedDataUrl(file, 800, 0.85).then(src=>{
+    window.givingModalQr=src;
+    const preview=document.getElementById('giving-qr-preview');
+    const remove=document.getElementById('giving-qr-remove');
+    if(preview){preview.src=src;preview.style.display='block';}
+    if(remove)remove.style.display='';
+  }).catch(()=>toast('Could not read that QR image.','Upload Failed',true));
+}
+function removeGivingModalQr(){
+  window.givingModalQr=null;
+  const preview=document.getElementById('giving-qr-preview');
+  const remove=document.getElementById('giving-qr-remove');
+  if(preview){preview.src='';preview.style.display='none';}
+  if(remove)remove.style.display='none';
+}
+function closeModal(){ document.getElementById('modal').classList.remove('active'); editingType=null; editingId=null; eventModalImage=null; window.givingModalQr=null; }
 function saveModal(){
   if(!editingType)return; const map={sermon:'sermons',activity:'activities',flyer:'flyers',leader:'leaders',service:'services',giving:'givingMethods',event:'events'};
   const savedType=editingType, wasEditing=Boolean(editingId);
   const arrKey=map[editingType]; const newItem=editingId?STATE[arrKey].find(x=>x.id===editingId):{id:uid(editingType[0])};
   document.querySelectorAll('#modal-fields [data-key]').forEach(input=>{newItem[input.dataset.key]=input.value.trim();});
   if(editingType==='event'){if(!newItem.rsvps)newItem.rsvps=[];newItem.image=eventModalImage;if(!newItem.location)newItem.location=(STATE.settings.address||'').trim();const ap=document.getElementById('event-approved-checkbox');newItem.approved=ap?!!ap.checked:true;if(!newItem.endDate)newItem.endDate=newItem.date||'';}
+  if(editingType==='giving'){newItem.kind=String(newItem.kind||'link').toLowerCase().trim()||'link';newItem.qrImage=window.givingModalQr||null;if(newItem.kind==='mail'&&!newItem.detail)newItem.detail=(STATE.settings.address||'').trim();}
   if(!editingId)STATE[arrKey].push(newItem);
   closeModal(); renderAll(); renderAdminAll(); toast(`${capitalize(savedType)} ${wasEditing?'updated':'added'}.`,'Saved');
 }
@@ -7030,7 +7282,7 @@ function renderAdminAll(){
   renderAdminList('flyers',STATE.flyers,f=>({title:f.title,sub:f.when}));
   renderAdminList('leaders',STATE.leaders,l=>({title:l.name,sub:l.position}));
   renderAdminList('services',STATE.services,s=>({title:s.name,sub:s.day+' · '+s.time}));
-  renderAdminList('giving',STATE.givingMethods,g=>({title:g.label,sub:g.detail}));
+  renderAdminList('giving',getGivingMethods(),g=>{const bits=[g.kind||'link',(g.detail||'').trim(),g.url?'link set':'',g.qrImage?'QR ready':''].filter(Boolean);return{title:g.label||'(untitled)',sub:bits.join(' · ')};});
   renderAdminPrayers(); renderAdminBudget(); renderAdminMembers(); updateAdminBadges();
   renderEmailTemplates(); renderSegmentChips(); renderSentLog();
   renderImageLibrary(); renderImageLibrary('image-library-grid');

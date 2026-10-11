@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-11-mail-giving" />
+<meta name="spdc-build" content="2026-10-11-mail-admin-form" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -7714,17 +7714,103 @@ const fieldDefs={
   flyer:[{k:'title',label:'Title',type:'text'},{k:'subtitle',label:'Subtitle',type:'text'},{k:'when',label:'When',type:'text'},{k:'meta',label:'Short Note',type:'text'},{k:'description',label:'Description',type:'textarea'}],
   leader:[{k:'name',label:'Full Name',type:'text'},{k:'position',label:'Short title (e.g. Pastor)',type:'text'},{k:'roleLabel',label:'Spotlight role line',type:'text'},{k:'initials',label:'Initials',type:'text'},{k:'verse',label:'Verse / quote',type:'textarea'},{k:'bio1',label:'Bio paragraph 1',type:'textarea'},{k:'bio2',label:'Bio paragraph 2',type:'textarea'}],
   service:[{k:'day',label:'Day',type:'text'},{k:'time',label:'Time',type:'text'},{k:'name',label:'Service Name',type:'text'},{k:'icon',label:'Icon',type:'text'},{k:'desc',label:'Description',type:'textarea'}],
-  giving:[{k:'label',label:'Method Name',type:'text'},{k:'kind',label:'Type (cashapp, givelify, mail, link)',type:'text'},{k:'detail',label:'Handle / instructions',type:'text'},{k:'icon',label:'Icon emoji',type:'text'},{k:'url',label:'Link URL (Cash App / Givelify)',type:'text'}],
+  giving:[{k:'label',label:'Method Name',type:'text'},{k:'kind',label:'Type',type:'text'},{k:'detail',label:'Handle / instructions',type:'text'},{k:'icon',label:'Icon emoji',type:'text'},{k:'url',label:'Link URL',type:'text'}],
   event:[{k:'title',label:'Event Title',type:'text'},{k:'date',label:'Date',type:'date'},{k:'time',label:'Time',type:'text'},{k:'location',label:'Location',type:'text'},{k:'description',label:'Description',type:'textarea'}]
 };
 let editingType=null,editingId=null,eventModalImage=null;
+
+function givingModalFieldsHtml(item, kindOverride){
+  const church = (STATE.settings && STATE.settings.churchName) || 'St. Pauls Deliverance Center';
+  const settingsAddress = (STATE.settings && STATE.settings.address) || '';
+  const kind = String(kindOverride || (item && item.kind) || 'link').toLowerCase().trim() || 'link';
+  const label = item ? (item.label || '') : (kind==='mail' ? 'Mail a Gift' : kind==='cashapp' ? 'Cash App' : kind==='givelify' ? 'Givelify' : '');
+  const icon = item ? (item.icon || '') : (kind==='mail' ? '✉️' : kind==='cashapp' ? '💵' : kind==='givelify' ? '🙏' : '✦');
+  let detail = item ? (item.detail || '') : '';
+  if(kind==='mail' && !String(detail).trim()) detail = settingsAddress;
+  const url = item ? (item.url || '') : '';
+  const kindOpts = [
+    {v:'cashapp', t:'Cash App'},
+    {v:'givelify', t:'Givelify'},
+    {v:'mail', t:'Mail / Check'},
+    {v:'link', t:'Other link'}
+  ].map(o=>`<option value="${o.v}" ${kind===o.v?'selected':''}>${o.t}</option>`).join('');
+
+  if(kind==='mail'){
+    return `
+      <div style="margin:0 0 16px;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,#fffaf0,#fdedc4);border:1px solid rgba(184,128,16,.35);">
+        <strong style="display:block;font-family:'Cinzel',serif;color:var(--primary-dark);font-size:15px;margin-bottom:4px;">✉️ Mailing address</strong>
+        <p style="margin:0;font-size:13px;color:var(--ink-mute);font-family:'Inter Tight',sans-serif;line-height:1.5;">Shown on Tithes &amp; Offerings as the place to send checks and letters. Payable to <strong>${escapeHtml(church)}</strong>.</p>
+      </div>
+      <label class="field-label">Method Name</label>
+      <input class="editable-field" type="text" data-key="label" value="${escapeAttr(label)}" />
+      <label class="field-label">Type</label>
+      <select class="editable-field" data-key="kind" onchange="onGivingKindChange(this.value)">${kindOpts}</select>
+      <label class="field-label">Mailing Address</label>
+      <textarea class="editable-field" data-key="detail" rows="3" placeholder="Street, City, State ZIP">${escapeHtml(detail)}</textarea>
+      <p style="font-size:12px;color:var(--ink-mute);margin:-6px 0 12px;font-family:'Inter Tight',sans-serif;">Leave blank to use the church address from Settings. Example: ${escapeHtml(settingsAddress||'1291 W Broad St, St Pauls, NC 28384')}</p>
+      <label class="field-label">Icon emoji</label>
+      <input class="editable-field" type="text" data-key="icon" value="${escapeAttr(icon||'✉️')}" />
+      <input type="hidden" data-key="url" value="" />
+      <div style="margin-top:8px;padding:12px 14px;border-radius:10px;border:1px dashed rgba(13,42,107,.25);background:rgba(13,42,107,.04);font-size:13px;color:var(--ink-mute);font-family:'Inter Tight',sans-serif;line-height:1.5;">No link or QR needed for mail — donors use the address on the Give page.</div>`;
+  }
+
+  const detailLabel = kind==='cashapp' ? 'Cashtag / short note' : kind==='givelify' ? 'Short note' : 'Handle / instructions';
+  const detailPh = kind==='cashapp' ? '$SPDCENTER' : kind==='givelify' ? 'Give online to our church' : 'Optional note';
+  const urlLabel = kind==='cashapp' ? 'Cash App link' : kind==='givelify' ? 'Givelify link' : 'Link URL';
+  return `
+    <label class="field-label">Method Name</label>
+    <input class="editable-field" type="text" data-key="label" value="${escapeAttr(label)}" />
+    <label class="field-label">Type</label>
+    <select class="editable-field" data-key="kind" onchange="onGivingKindChange(this.value)">${kindOpts}</select>
+    <label class="field-label">${detailLabel}</label>
+    <input class="editable-field" type="text" data-key="detail" value="${escapeAttr(detail)}" placeholder="${escapeAttr(detailPh)}" />
+    <label class="field-label">Icon emoji</label>
+    <input class="editable-field" type="text" data-key="icon" value="${escapeAttr(icon)}" />
+    <label class="field-label">${urlLabel}</label>
+    <input class="editable-field" type="text" data-key="url" value="${escapeAttr(url)}" placeholder="https://" />
+    <label class="field-label">QR Code Image (optional)</label>
+    <div style="border:1px dashed var(--border-soft);border-radius:var(--r-md);padding:14px;text-align:center;">
+      <img id="giving-qr-preview" src="${window.givingModalQr?escapeAttr(window.givingModalQr):''}" alt="QR preview" style="${window.givingModalQr?'':'display:none;'}width:160px;height:160px;object-fit:contain;border-radius:10px;margin:0 auto 12px;background:#fff;border:1px solid var(--border-soft);" />
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <label class="file-btn">▦ Upload QR<input type="file" accept="image/*" onchange="handleGivingQrUpload(event)" /></label>
+        <button type="button" class="add-btn" id="giving-qr-remove" onclick="removeGivingModalQr()" style="${window.givingModalQr?'':'display:none;'}">Remove QR</button>
+      </div>
+      <p style="font-size:12px;color:var(--ink-mute);margin-top:9px;font-family:'Inter Tight',sans-serif;">Upload your Cash App or Givelify QR from your phone.</p>
+    </div>`;
+}
+
+function onGivingKindChange(kind){
+  const draft = {};
+  document.querySelectorAll('#modal-fields [data-key]').forEach(input=>{ draft[input.dataset.key]=input.value; });
+  draft.kind = kind;
+  if(kind==='mail' && !String(draft.detail||'').trim()){
+    draft.detail = (STATE.settings && STATE.settings.address) || '';
+  }
+  if(kind==='mail' && !String(draft.label||'').trim()) draft.label = 'Mail a Gift';
+  if(kind==='mail' && !String(draft.icon||'').trim()) draft.icon = '✉️';
+  window._givingModalItem = Object.assign({}, window._givingModalItem || {}, draft);
+  document.getElementById('modal-fields').innerHTML = givingModalFieldsHtml(window._givingModalItem, kind);
+  document.getElementById('modal-sub').textContent = kind==='mail'
+    ? 'Enter the mailing address for checks and letters.'
+    : 'Fill in the fields and save.';
+}
 
 function buildModal(type,item){
   const defs=fieldDefs[type]; document.getElementById('modal-title').textContent=(item?'Edit ':'Add ')+capitalize(type); document.getElementById('modal-sub').textContent='Fill in the fields and save.';
   eventModalImage=type==='event'&&item&&item.image?item.image:null;
   window.givingModalQr=type==='giving'&&item&&item.qrImage?item.qrImage:null;
   window.leaderModalImage=type==='leader'&&item&&item.image?item.image:null;
-  const fields=defs.map(d=>{ const v=item?(item[d.k]||''):''; return d.type==='textarea'?`<label class="field-label">${d.label}${type==='event'&&d.k==='description'?' (optional)':''}</label><textarea class="editable-field" data-key="${d.k}">${escapeHtml(v)}</textarea>`:`<label class="field-label">${d.label}</label><input class="editable-field" type="${d.type}" data-key="${d.k}" value="${escapeAttr(v)}" />`; }).join('');
+  window._givingModalItem = type==='giving' ? Object.assign({}, item||{}) : null;
+  let fields='';
+  if(type==='giving'){
+    const kind = String((item && item.kind) || 'link').toLowerCase();
+    document.getElementById('modal-sub').textContent = kind==='mail'
+      ? 'Enter the mailing address for checks and letters.'
+      : 'Fill in the fields and save.';
+    fields = givingModalFieldsHtml(item, kind);
+  } else {
+    fields=defs.map(d=>{ const v=item?(item[d.k]||''):''; return d.type==='textarea'?`<label class="field-label">${d.label}${type==='event'&&d.k==='description'?' (optional)':''}</label><textarea class="editable-field" data-key="${d.k}">${escapeHtml(v)}</textarea>`:`<label class="field-label">${d.label}</label><input class="editable-field" type="${d.type}" data-key="${d.k}" value="${escapeAttr(v)}" />`; }).join('');
+  }
   const eventPicture=type==='event'?`
     <label class="field-label">Event Picture (optional)</label>
     <div style="border:1px dashed var(--border-soft);border-radius:var(--r-md);padding:14px;text-align:center;">
@@ -7741,16 +7827,6 @@ function buildModal(type,item){
     </label>
     <label class="field-label">End date (optional — for multi-day events)</label>
     <input class="editable-field" type="date" data-key="endDate" value="${escapeAttr(item&&item.endDate?item.endDate:'')}" />`:'';
-  const givingQr=type==='giving'?`
-    <label class="field-label">QR Code Image (optional)</label>
-    <div style="border:1px dashed var(--border-soft);border-radius:var(--r-md);padding:14px;text-align:center;">
-      <img id="giving-qr-preview" src="${window.givingModalQr?escapeAttr(window.givingModalQr):''}" alt="QR preview" style="${window.givingModalQr?'':'display:none;'}width:160px;height:160px;object-fit:contain;border-radius:10px;margin:0 auto 12px;background:#fff;border:1px solid var(--border-soft);" />
-      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-        <label class="file-btn">▦ Upload QR<input type="file" accept="image/*" onchange="handleGivingQrUpload(event)" /></label>
-        <button type="button" class="add-btn" id="giving-qr-remove" onclick="removeGivingModalQr()" style="${window.givingModalQr?'':'display:none;'}">Remove QR</button>
-      </div>
-      <p style="font-size:12px;color:var(--ink-mute);margin-top:9px;font-family:'Inter Tight',sans-serif;">Upload the Cash App or Givelify QR from your phone. Type <code>cashapp</code>, <code>givelify</code>, or <code>mail</code> in Type.</p>
-    </div>`:'';
   const leaderPicture=type==='leader'?`
     <label class="field-label">Photo (optional)</label>
     <div style="border:1px dashed var(--border-soft);border-radius:var(--r-md);padding:14px;text-align:center;">
@@ -7761,7 +7837,7 @@ function buildModal(type,item){
       </div>
       <p style="font-size:12px;color:var(--ink-mute);margin-top:9px;font-family:'Inter Tight',sans-serif;">Photo shows in the large spotlight and the circle picker. Leave blank to use initials. Fill verse and bio anytime — empty lines stay hidden.</p>
     </div>`:'';
-  document.getElementById('modal-fields').innerHTML=fields+eventPicture+givingQr+leaderPicture;
+  document.getElementById('modal-fields').innerHTML=fields+eventPicture+leaderPicture;
   document.getElementById('modal').classList.add('active'); editingType=type; editingId=item?item.id:null;
 }
 function openAddModal(type){ buildModal(type,null); }
@@ -7822,14 +7898,25 @@ function removeLeaderModalImage(){
   if(preview){preview.src='';preview.style.display='none';}
   if(remove)remove.style.display='none';
 }
-function closeModal(){ document.getElementById('modal').classList.remove('active'); editingType=null; editingId=null; eventModalImage=null; window.givingModalQr=null; window.leaderModalImage=null; }
+function closeModal(){ document.getElementById('modal').classList.remove('active'); editingType=null; editingId=null; eventModalImage=null; window.givingModalQr=null; window.leaderModalImage=null; window._givingModalItem=null; }
 function saveModal(){
   if(!editingType)return; const map={sermon:'sermons',activity:'activities',flyer:'flyers',leader:'leaders',service:'services',giving:'givingMethods',event:'events'};
   const savedType=editingType, wasEditing=Boolean(editingId);
   const arrKey=map[editingType]; const newItem=editingId?STATE[arrKey].find(x=>x.id===editingId):{id:uid(editingType[0])};
   document.querySelectorAll('#modal-fields [data-key]').forEach(input=>{newItem[input.dataset.key]=input.value.trim();});
   if(editingType==='event'){if(!newItem.rsvps)newItem.rsvps=[];newItem.image=eventModalImage;if(!newItem.location)newItem.location=(STATE.settings.address||'').trim();const ap=document.getElementById('event-approved-checkbox');newItem.approved=ap?!!ap.checked:true;if(!newItem.endDate)newItem.endDate=newItem.date||'';}
-  if(editingType==='giving'){newItem.kind=String(newItem.kind||'link').toLowerCase().trim()||'link';newItem.qrImage=window.givingModalQr||null;if(newItem.kind==='mail'&&!newItem.detail)newItem.detail=(STATE.settings.address||'').trim();}
+  if(editingType==='giving'){
+    newItem.kind=String(newItem.kind||'link').toLowerCase().trim()||'link';
+    if(newItem.kind==='mail'){
+      newItem.url='';
+      newItem.qrImage=null;
+      if(!newItem.detail) newItem.detail=(STATE.settings.address||'').trim();
+      if(!newItem.label) newItem.label='Mail a Gift';
+      if(!newItem.icon) newItem.icon='✉️';
+    } else {
+      newItem.qrImage=window.givingModalQr||null;
+    }
+  }
   if(editingType==='leader'){
     newItem.image=window.leaderModalImage||null;
     if(!newItem.initials) newItem.initials=initials(newItem.name||'');

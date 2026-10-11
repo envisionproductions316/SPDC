@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-10-givelify-card" />
+<meta name="spdc-build" content="2026-10-11-cashapp-spdcenter" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -1630,7 +1630,7 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
 .give-side p { font-size: 17px; color: var(--text-on-dark-soft); margin-bottom: 16px; line-height: 1.7; }
 .give-methods-grid {
   display: grid;
-  grid-template-columns: 1.35fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
   margin: 8px 0 36px;
   align-items: stretch;
@@ -1827,14 +1827,87 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
   color: #0c1a3d;
   box-shadow: 0 16px 34px -8px rgba(244, 197, 66, .85);
 }
+.give-method-card.is-cashapp {
+  padding: 30px 24px 28px;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 0%, rgba(0, 214, 50, 0.28), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(244, 197, 66, 0.12), transparent 50%),
+    linear-gradient(165deg, rgba(8, 18, 20, 0.96), rgba(6, 28, 16, 0.98));
+  border-color: rgba(0, 214, 50, 0.42);
+  box-shadow: 0 20px 44px -22px rgba(0, 140, 40, .55);
+}
+.give-method-card.is-cashapp .gm-badge {
+  display: inline-block;
+  margin-bottom: 2px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(0, 214, 50, 0.16);
+  border: 1px solid rgba(141, 255, 176, 0.4);
+  color: #b6ffcb;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
 .give-method-card.is-cashapp .gm-icon {
+  width: 64px; height: 64px;
+  border-radius: 18px;
   background: linear-gradient(145deg, #00d632, #00a824);
   color: #fff;
-  box-shadow: 0 10px 22px -10px rgba(0, 200, 50, .55);
+  box-shadow: 0 12px 26px -10px rgba(0, 200, 50, .65);
+}
+.give-method-card.is-cashapp .gm-icon svg { width: 34px; height: 34px; }
+.give-method-card.is-cashapp strong {
+  font-size: 22px;
+  color: #f4fff7;
+}
+.give-method-card.is-cashapp .gm-cashtag {
+  display: inline-block;
+  margin-top: -2px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(141, 255, 176, 0.35);
+  color: #8dffb0;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+.give-method-card.is-cashapp .gm-detail {
+  color: rgba(232, 255, 238, 0.85);
+}
+.give-method-card.is-cashapp .gm-meta {
+  color: rgba(182, 255, 203, 0.72);
+}
+.give-method-card.is-cashapp .gm-meta span::before { background: #00d632; }
+.give-method-card.is-cashapp .gm-qr {
+  width: 168px;
+  height: 168px;
+  padding: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 214, 50, 0.4);
+  background: #000;
+  box-shadow: 0 12px 28px -14px rgba(0,0,0,.6);
 }
 .give-method-card.is-cashapp .gm-cta {
-  border-color: rgba(0, 214, 50, .45);
-  color: #8dffb0;
+  margin-top: 8px;
+  min-width: 220px;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #00d632, #00b82a);
+  border: none;
+  color: #04140a;
+  box-shadow: 0 12px 28px -10px rgba(0, 214, 50, .65);
+}
+.give-method-card.is-cashapp:hover {
+  border-color: rgba(141, 255, 176, 0.65);
+  transform: translateY(-6px);
+}
+.give-method-card.is-cashapp:hover .gm-cta {
+  background: linear-gradient(135deg, #4dff78, #00d632);
+  color: #04140a;
+  box-shadow: 0 16px 34px -8px rgba(0, 214, 50, .8);
 }
 .give-method {
   background: rgba(255, 248, 225, 0.06);
@@ -5771,7 +5844,7 @@ const DEFAULT_STATE = {
     { id:'sv3', day:'Wednesday', time:'7:00 PM', name:'Bible Study', desc:'Deep dive into Scripture and corporate prayer.', icon:'🔥' }
   ],
   givingMethods:[
-    { id:'give-cashapp', kind:'cashapp', label:'Cash App', icon:'💵', detail:'Set your $Cashtag in Admin → Giving Methods', url:'', qrImage:null },
+    { id:'give-cashapp', kind:'cashapp', label:'Cash App', icon:'💵', detail:'St Pauls Deliverance Center', url:'https://cash.app/$SPDCENTER', qrImage:'assets/giving/cashapp-qr.svg' },
     { id:'give-givelify', kind:'givelify', label:'Givelify', icon:'🙏', detail:'Give online to St Pauls Deliverance Center', url:'https://www.givelify.com/donate/MTg4NTc3Nw==/selection', qrImage:null },
     { id:'give-mail', kind:'mail', label:'Mail a Gift', icon:'✉️', detail:'', url:'', qrImage:null }
   ],
@@ -6822,8 +6895,10 @@ function renderServices(){
 function migrateGivingMethods(){
   if(!Array.isArray(STATE.givingMethods)) STATE.givingMethods = [];
   const GIVELIFY_URL = 'https://www.givelify.com/donate/MTg4NTc3Nw==/selection';
+  const CASHAPP_URL = 'https://cash.app/$SPDCENTER';
+  const CASHAPP_QR = 'assets/giving/cashapp-qr.svg';
   const defaults = [
-    { id:'give-cashapp', kind:'cashapp', label:'Cash App', icon:'💵', detail:'Set your $Cashtag in Admin → Giving Methods', url:'', qrImage:null },
+    { id:'give-cashapp', kind:'cashapp', label:'Cash App', icon:'💵', detail:'St Pauls Deliverance Center', url:CASHAPP_URL, qrImage:CASHAPP_QR },
     { id:'give-givelify', kind:'givelify', label:'Givelify', icon:'🙏', detail:'Give online to St Pauls Deliverance Center', url:GIVELIFY_URL, qrImage:null },
     { id:'give-mail', kind:'mail', label:'Mail a Gift', icon:'✉️', detail:'', url:'', qrImage:null }
   ];
@@ -6847,6 +6922,22 @@ function migrateGivingMethods(){
       else g.kind = 'link';
     }
     if(typeof g.qrImage === 'undefined') g.qrImage = null;
+    // Keep SPDC Cash App ($SPDCENTER) linked with published QR
+    if(String(g.kind||'').toLowerCase()==='cashapp' || String(g.id||'')==='give-cashapp' || String(g.label||'').toLowerCase().includes('cash')){
+      const u = String(g.url||'').trim();
+      if(!u || !u.toLowerCase().includes('spdcenter')){
+        g.url = CASHAPP_URL;
+        patched = true;
+      }
+      if(!String(g.detail||'').trim() || String(g.detail).includes('Set your $Cashtag') || String(g.detail).includes('Set your $cashtag')){
+        g.detail = 'St Pauls Deliverance Center';
+        patched = true;
+      }
+      if(!String(g.qrImage||'').trim()){
+        g.qrImage = CASHAPP_QR;
+        patched = true;
+      }
+    }
     // Keep SPDC Givelify donate page linked (replace blank / homepage placeholders)
     if(String(g.kind||'').toLowerCase()==='givelify' || String(g.id||'')==='give-givelify' || String(g.label||'').toLowerCase().includes('givelify')){
       const u = String(g.url||'').trim();
@@ -6900,20 +6991,24 @@ function renderGivingMethods(){
       const kind = String(g.kind||'link').toLowerCase();
       const url = (g.url||'').trim();
       const isLink = url && (url.startsWith('http') || url.startsWith('mailto:') || url.startsWith('cashapp://'));
-      const detail = (g.detail||'').trim() || (kind==='cashapp' ? 'Send your gift instantly with Cash App' : kind==='givelify' ? 'Give online to St Pauls Deliverance Center' : 'Tap to give');
-      const qr = (g.qrImage||'').trim();
-      const qrHtml = qr ? `<img class="gm-qr" src="${escapeAttr(qr)}" alt="${escapeAttr(g.label||'Giving')} QR code" />` : '';
-      const cta = kind==='cashapp' ? 'Open Cash App' : kind==='givelify' ? 'Give with Givelify' : (isLink ? 'Open link' : 'Details');
-      const badge = kind==='givelify' ? `<span class="gm-badge">Secure Online Giving</span>` : '';
+      const detail = (g.detail||'').trim() || (kind==='cashapp' ? 'St Pauls Deliverance Center' : kind==='givelify' ? 'Give online to St Pauls Deliverance Center' : 'Tap to give');
+      const qr = (g.qrImage||'').trim() || (kind==='cashapp' ? 'assets/giving/cashapp-qr.svg' : '');
+      const qrHtml = qr ? `<img class="gm-qr" src="${escapeAttr(qr)}" alt="${escapeAttr(kind==='cashapp' ? 'Scan to pay $SPDCENTER with Cash App' : (g.label||'Giving')+' QR code')}" />` : '';
+      const cta = kind==='cashapp' ? 'Pay $SPDCENTER' : kind==='givelify' ? 'Give with Givelify' : (isLink ? 'Open link' : 'Details');
+      const badge = kind==='givelify'
+        ? `<span class="gm-badge">Secure Online Giving</span>`
+        : (kind==='cashapp' ? `<span class="gm-badge">Scan or tap to give</span>` : '');
+      const cashtag = kind==='cashapp' ? `<div class="gm-cashtag">$SPDCENTER</div>` : '';
       const meta = kind==='givelify'
         ? `<div class="gm-meta"><span>Instant</span><span>Secure</span><span>Tax receipt</span></div>`
-        : (kind==='cashapp' ? `<div class="gm-meta"><span>Fast</span><span>Mobile</span></div>` : '');
+        : (kind==='cashapp' ? `<div class="gm-meta"><span>Scan QR</span><span>Or open Cash App</span></div>` : '');
       const cardClass = `give-method-card${kind==='givelify'?' is-givelify':''}${kind==='cashapp'?' is-cashapp':''}`;
       const iconHtml = (kind==='givelify' || kind==='cashapp') ? iconFor(kind) : escapeHtml(g.icon||'✦');
       const inner = `
         ${badge}
         <div class="gm-icon">${iconHtml}</div>
         <strong>${escapeHtml(g.label||'Give')}</strong>
+        ${cashtag}
         <div class="gm-detail">${escapeHtml(detail)}</div>
         ${meta}
         ${qrHtml}

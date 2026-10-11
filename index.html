@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-07-26-events-live" />
+<meta name="spdc-build" content="2026-10-10-events-lifecycle" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -4159,6 +4159,22 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
     </div>
   </div>
 
+  <section class="spdc events" id="home-events-section" style="display:none;padding-top:60px;">
+    <div class="container">
+      <div class="section-head" id="home-events-head">
+        <span class="eyebrow">Mark Your Calendar</span>
+        <h2>Upcoming Events</h2>
+        <div class="divider"><span>✦</span></div>
+        <p>Gatherings, conferences, and special services — RSVP to save your spot.</p>
+      </div>
+      <div class="event-gallery" id="home-event-gallery"></div>
+      <div class="event-list" id="home-event-list"></div>
+      <div style="text-align:center;margin-top:28px;">
+        <button class="btn-ghost" style="color:var(--primary-dark);border-color:var(--border-soft);" onclick="goPage('events')">View all events →</button>
+      </div>
+    </div>
+  </section>
+
   <section class="spdc services">
     <div class="container">
       <div class="section-head">
@@ -4299,14 +4315,29 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
 <section id="page-events" class="page">
   <section class="spdc events" style="padding-top:60px;">
     <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Mark Your Calendar</span>
-        <h2>Upcoming Events</h2>
-        <div class="divider"><span>✦</span></div>
-        <p>Gatherings, conferences, and special services — RSVP to save your spot.</p>
+      <div id="events-empty" style="display:none;padding:50px;text-align:center;color:var(--ink-mute);font-style:italic;">No events to show right now. Check back soon.</div>
+
+      <div id="upcoming-events-block" style="display:none;">
+        <div class="section-head">
+          <span class="eyebrow">Mark Your Calendar</span>
+          <h2>Upcoming Events</h2>
+          <div class="divider"><span>✦</span></div>
+          <p>Gatherings, conferences, and special services — RSVP to save your spot.</p>
+        </div>
+        <div class="event-gallery" id="event-gallery"></div>
+        <div class="event-list" id="event-list"></div>
       </div>
-      <div class="event-gallery" id="event-gallery"></div>
-      <div class="event-list" id="event-list"></div>
+
+      <div id="past-events-block" style="display:none;margin-top:56px;">
+        <div class="section-head">
+          <span class="eyebrow">Looking Back</span>
+          <h2>Past Events</h2>
+          <div class="divider"><span>✦</span></div>
+          <p>Recent gatherings and special services from our church family.</p>
+        </div>
+        <div class="event-gallery" id="past-event-gallery"></div>
+        <div class="event-list" id="past-event-list"></div>
+      </div>
     </div>
   </section>
 </section>
@@ -6406,7 +6437,7 @@ function processAIChatRequest(prompt){
     const dateMatch=prompt.match(/(?:on\s+)?([A-Z][a-z]+\.?\s+\d{1,2}(?:,?\s*\d{4})?|\w+\s+\d{1,2}(?:st|nd|rd|th)?)/i);
     const title=titleMatch?titleMatch[1].trim():'Special Event';
     const date=dateMatch?new Date(dateMatch[1]+'2026').toISOString().slice(0,10):'2026-07-01';
-    const newE={id:uid('e'),title,date:date||'2026-07-01',time:'7:00 PM',location:'Main Sanctuary',description:'Come expecting a move of God.',rsvps:[],image:null};
+    const newE={id:uid('e'),title,date:date||'2026-07-01',endDate:date||'2026-07-01',time:'7:00 PM',location:'Main Sanctuary',description:'Come expecting a move of God.',rsvps:[],image:null,approved:true};
     STATE.events.push(newE);
     renderEvents(); renderAdminAll();
     return{html:`✅ <strong>Event "${escapeHtml(title)}" created!</strong><div class="action-btns"><button class="action-btn" onclick="goPage('events')">View Events</button></div>`};
@@ -6585,39 +6616,19 @@ function renderGivingMethods(){
   if(!STATE.givingMethods.length){el.innerHTML='<div style="padding:30px;text-align:center;color:var(--ink-mute);font-style:italic;font-family:\'Inter Tight\',sans-serif;">Giving options will appear here once the church adds Cash App, Zelle, PayPal, or mail details in the admin panel.</div>';return;}
   el.innerHTML=STATE.givingMethods.map(g=>{ const isLink=g.url&&(g.url.startsWith('http')||g.url.startsWith('mailto:')); const tag=isLink?'a':'div'; const attrs=isLink?`href="${escapeAttr(g.url)}" target="_blank" rel="noopener"`:''; return `<${tag} class="give-method" ${attrs}><div class="gm-icon">${escapeHtml(g.icon)}</div><div class="gm-content"><strong>${escapeHtml(g.label)}</strong><span>${escapeHtml(g.detail)}</span></div>${isLink?'<span class="external">↗</span>':''}</${tag}>`; }).join('');
 }
-function renderEvents(){
-  const galleryEl=document.getElementById('event-gallery');
-  const listEl=document.getElementById('event-list');
-  if(!galleryEl && !listEl) return;
-  try{
-    const sorted=getEventList().slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
-    if(!sorted.length){
-      if(galleryEl) galleryEl.innerHTML='';
-      if(listEl) listEl.innerHTML='<div style="padding:50px;text-align:center;color:var(--ink-mute);font-style:italic;">No upcoming events yet. Check back soon — or add one in Admin → Events.</div>';
-      window._eventGalleryItems=[];
-      return;
-    }
-    const withPhotos=sorted.filter(e=>(e.image||'').trim());
-    const withoutPhotos=sorted.filter(e=>!(e.image||'').trim());
-    window._eventGalleryItems=withPhotos.map(e=>{
-      const title=e.title||'Untitled Event';
-      const time=e.time||'';
-      const location=(e.location||'').trim()||(STATE.settings.address||'').trim();
-      const date=e.date||'';
-      const dateLabel=[formatDate(date),time,location].filter(Boolean).join(' · ');
-      return { id:e.id, src:e.image, title, meta:dateLabel, description:(e.description||'').trim() };
-    });
-
-    if(galleryEl){
-      galleryEl.innerHTML=withPhotos.length?withPhotos.map((e,idx)=>{
-        const rsvped=STATE.currentUser&&Array.isArray(e.rsvps)&&e.rsvps.includes(STATE.currentUser.id);
-        const title=e.title||'Untitled Event';
-        const time=e.time||'';
-        const location=(e.location||'').trim()||(STATE.settings.address||'').trim();
-        const desc=(e.description||'').trim();
-        const date=e.date||'';
-        const dateLine=[getMonthShort(date), getDayNum(date), getWeekday(date)].filter(Boolean).join(' ');
-        return `<article class="event-gallery-card">
+function eventCardHtml(e, idx, {past=false}={}){
+  const rsvped=STATE.currentUser&&Array.isArray(e.rsvps)&&e.rsvps.includes(STATE.currentUser.id);
+  const title=e.title||'Untitled Event';
+  const time=e.time||'';
+  const location=(e.location||'').trim()||(STATE.settings.address||'').trim();
+  const desc=(e.description||'').trim();
+  const date=e.date||'';
+  const dateLine=[getMonthShort(date), getDayNum(date), getWeekday(date)].filter(Boolean).join(' ');
+  const actions = past
+    ? `<button class="btn-ghost" style="color:var(--primary-dark);border-color:var(--border-soft);padding:10px 16px;font-size:13px;" onclick="openEventLightbox(${idx})">View photo</button>`
+    : `<button class="event-rsvp ${rsvped?'rsvped':''}" onclick="rsvpEvent('${escapeAttr(e.id)}')">${rsvped?"✓ Going":"RSVP"}</button>
+              <button class="btn-ghost" style="color:var(--primary-dark);border-color:var(--border-soft);padding:10px 16px;font-size:13px;" onclick="openEventLightbox(${idx})">View photo</button>`;
+  return `<article class="event-gallery-card">
           <button type="button" class="event-gallery-thumb" onclick="openEventLightbox(${idx})" aria-label="View full photo of ${escapeAttr(title)}">
             <img src="${escapeAttr(e.image)}" alt="${escapeAttr(title)}" loading="lazy" />
             <span class="zoom-hint">Full view</span>
@@ -6628,42 +6639,150 @@ function renderEvents(){
             <div class="meta">${time?('⏰ '+escapeHtml(time)):''}${time&&location?' · ':''}${location?('📍 '+escapeHtml(location)):''}</div>
             ${desc?`<p>${escapeHtml(desc)}</p>`:''}
             <div class="event-gallery-actions">
-              <button class="event-rsvp ${rsvped?'rsvped':''}" onclick="rsvpEvent('${escapeAttr(e.id)}')">${rsvped?"✓ Going":"RSVP"}</button>
-              <button class="btn-ghost" style="color:var(--primary-dark);border-color:var(--border-soft);padding:10px 16px;font-size:13px;" onclick="openEventLightbox(${idx})">View photo</button>
+              ${actions}
             </div>
           </div>
         </article>`;
-      }).join(''):'';
-    }
+}
 
-    if(listEl){
-      if(!withoutPhotos.length){
-        listEl.innerHTML=withPhotos.length?'':'<div style="padding:50px;text-align:center;color:var(--ink-mute);font-style:italic;">No upcoming events yet.</div>';
-      }else{
-        listEl.innerHTML=(withPhotos.length?`<div class="section-label" style="margin:8px 0 16px;">More upcoming events</div>`:'')+withoutPhotos.map(e=>{
-          const rsvped=STATE.currentUser&&Array.isArray(e.rsvps)&&e.rsvps.includes(STATE.currentUser.id);
-          const title=e.title||'Untitled Event';
-          const time=e.time||'';
-          const location=(e.location||'').trim()||(STATE.settings.address||'').trim();
-          const desc=(e.description||'').trim();
-          const date=e.date||'';
-          return `<div class="event-row">
+function eventRowHtml(e, {past=false}={}){
+  const rsvped=STATE.currentUser&&Array.isArray(e.rsvps)&&e.rsvps.includes(STATE.currentUser.id);
+  const title=e.title||'Untitled Event';
+  const time=e.time||'';
+  const location=(e.location||'').trim()||(STATE.settings.address||'').trim();
+  const desc=(e.description||'').trim();
+  const date=e.date||'';
+  const rsvp = past ? '' : `<button class="event-rsvp ${rsvped?'rsvped':''}" onclick="rsvpEvent('${escapeAttr(e.id)}')">${rsvped?"✓ Going":"RSVP"}</button>`;
+  return `<div class="event-row">
             <div class="event-date"><div class="month">${escapeHtml(getMonthShort(date)||'')}</div><div class="day">${escapeHtml(String(getDayNum(date)||''))}</div><div class="weekday">${escapeHtml(getWeekday(date)||'')}</div></div>
             <div class="event-details">
               <h4>${escapeHtml(title)}</h4>
               <div class="meta">${time?('⏰ '+escapeHtml(time)):''}${time&&location?' · ':''}${location?('📍 '+escapeHtml(location)):''}</div>
               ${desc?`<p>${escapeHtml(desc)}</p>`:''}
             </div>
-            <button class="event-rsvp ${rsvped?'rsvped':''}" onclick="rsvpEvent('${escapeAttr(e.id)}')">${rsvped?"✓ Going":"RSVP"}</button>
+            ${rsvp}
           </div>`;
-        }).join('');
+}
+
+function fillEventContainers(galleryEl, listEl, events, {past=false, lightboxOffset=0}={}){
+  const withPhotos=events.filter(e=>(e.image||'').trim());
+  const withoutPhotos=events.filter(e=>!(e.image||'').trim());
+  if(galleryEl){
+    galleryEl.innerHTML=withPhotos.length?withPhotos.map((e,i)=>eventCardHtml(e, lightboxOffset+i, {past})).join(''):'';
+  }
+  if(listEl){
+    if(!withoutPhotos.length){
+      listEl.innerHTML='';
+    }else{
+      const label = past
+        ? (withPhotos.length?`<div class="section-label" style="margin:8px 0 16px;">More past events</div>`:'')
+        : (withPhotos.length?`<div class="section-label" style="margin:8px 0 16px;">More upcoming events</div>`:'');
+      listEl.innerHTML=label+withoutPhotos.map(e=>eventRowHtml(e,{past})).join('');
+    }
+  }
+  return withPhotos;
+}
+
+function renderEvents(){
+  try{
+    const upcoming = getUpcomingEvents({approvedOnly:true});
+    const past = getPastEvents({approvedOnly:true});
+    const home = getHomeEvents();
+
+    // --- HOME: approved future only; hide whole block when empty ---
+    const homeSection = document.getElementById('home-events-section');
+    if(homeSection){
+      if(!home.length){
+        homeSection.style.display = 'none';
+        const hg = document.getElementById('home-event-gallery');
+        const hl = document.getElementById('home-event-list');
+        if(hg) hg.innerHTML = '';
+        if(hl) hl.innerHTML = '';
+      } else {
+        homeSection.style.display = '';
+        fillEventContainers(
+          document.getElementById('home-event-gallery'),
+          document.getElementById('home-event-list'),
+          home,
+          {past:false, lightboxOffset:0}
+        );
       }
+    }
+
+    // --- EVENTS PAGE: show Upcoming / Past headings only when they have items ---
+    const upBlock = document.getElementById('upcoming-events-block');
+    const pastBlock = document.getElementById('past-events-block');
+    const emptyEl = document.getElementById('events-empty');
+
+    const galleryItems = [];
+    if(upBlock){
+      if(upcoming.length){
+        upBlock.style.display = '';
+        const photos = fillEventContainers(
+          document.getElementById('event-gallery'),
+          document.getElementById('event-list'),
+          upcoming,
+          {past:false, lightboxOffset:0}
+        );
+        photos.forEach(e=>{
+          const title=e.title||'Untitled Event';
+          const time=e.time||'';
+          const location=(e.location||'').trim()||(STATE.settings.address||'').trim();
+          const date=e.date||'';
+          galleryItems.push({ id:e.id, src:e.image, title, meta:[formatDate(date),time,location].filter(Boolean).join(' · '), description:(e.description||'').trim() });
+        });
+      } else {
+        upBlock.style.display = 'none';
+        const g=document.getElementById('event-gallery'); const l=document.getElementById('event-list');
+        if(g) g.innerHTML=''; if(l) l.innerHTML='';
+      }
+    }
+
+    if(pastBlock){
+      if(past.length){
+        pastBlock.style.display = '';
+        const offset = galleryItems.length;
+        const photos = fillEventContainers(
+          document.getElementById('past-event-gallery'),
+          document.getElementById('past-event-list'),
+          past,
+          {past:true, lightboxOffset:offset}
+        );
+        photos.forEach(e=>{
+          const title=e.title||'Untitled Event';
+          const time=e.time||'';
+          const location=(e.location||'').trim()||(STATE.settings.address||'').trim();
+          const date=e.date||'';
+          galleryItems.push({ id:e.id, src:e.image, title, meta:[formatDate(date),time,location].filter(Boolean).join(' · '), description:(e.description||'').trim() });
+        });
+      } else {
+        pastBlock.style.display = 'none';
+        const g=document.getElementById('past-event-gallery'); const l=document.getElementById('past-event-list');
+        if(g) g.innerHTML=''; if(l) l.innerHTML='';
+      }
+    }
+
+    if(emptyEl){
+      emptyEl.style.display = (!upcoming.length && !past.length) ? '' : 'none';
+    }
+
+    window._eventGalleryItems = galleryItems;
+
+    // Keep homepage hero flyers in sync (past event flyers drop off Home immediately)
+    if(typeof renderCustomHeroPages === 'function' && !window._renderingHeroPages){
+      try {
+        window._syncHeroFromEvents = true;
+        renderCustomHeroPages();
+      } catch(_){}
+      finally { window._syncHeroFromEvents = false; }
     }
   }catch(err){
     console.warn('SPDC: renderEvents failed', err);
+    const listEl=document.getElementById('event-list');
     if(listEl) listEl.innerHTML='<div style="padding:50px;text-align:center;color:var(--ink-mute);font-style:italic;">Events could not load. Try refreshing, or re-save events in Admin.</div>';
   }
 }
+
 let _eventLightboxIndex=0;
 function openEventLightbox(index){
   const items=window._eventGalleryItems||[];
@@ -6823,7 +6942,13 @@ function buildModal(type,item){
         <button type="button" class="add-btn" id="event-image-remove" onclick="removeEventModalImage()" style="${eventModalImage?'':'display:none;'}">Remove Picture</button>
       </div>
       <p style="font-size:12px;color:var(--ink-mute);margin-top:9px;font-family:'Inter Tight',sans-serif;">You may use a picture, a description, or both.</p>
-    </div>`:'';
+    </div>
+    <label class="field-label" style="display:flex;align-items:center;gap:10px;margin-top:14px;text-transform:none;letter-spacing:0;font-size:14px;">
+      <input type="checkbox" id="event-approved-checkbox" ${(!item || item.approved!==false)?'checked':''} style="width:18px;height:18px;" />
+      Approved for Home &amp; public pages (uncheck to keep as draft)
+    </label>
+    <label class="field-label">End date (optional — for multi-day events)</label>
+    <input class="editable-field" type="date" data-key="endDate" value="${escapeAttr(item&&item.endDate?item.endDate:'')}" />`:'';
   document.getElementById('modal-fields').innerHTML=fields+eventPicture;
   document.getElementById('modal').classList.add('active'); editingType=type; editingId=item?item.id:null;
 }
@@ -6854,7 +6979,7 @@ function saveModal(){
   const savedType=editingType, wasEditing=Boolean(editingId);
   const arrKey=map[editingType]; const newItem=editingId?STATE[arrKey].find(x=>x.id===editingId):{id:uid(editingType[0])};
   document.querySelectorAll('#modal-fields [data-key]').forEach(input=>{newItem[input.dataset.key]=input.value.trim();});
-  if(editingType==='event'){if(!newItem.rsvps)newItem.rsvps=[];newItem.image=eventModalImage;if(!newItem.location)newItem.location=(STATE.settings.address||'').trim();}
+  if(editingType==='event'){if(!newItem.rsvps)newItem.rsvps=[];newItem.image=eventModalImage;if(!newItem.location)newItem.location=(STATE.settings.address||'').trim();const ap=document.getElementById('event-approved-checkbox');newItem.approved=ap?!!ap.checked:true;if(!newItem.endDate)newItem.endDate=newItem.date||'';}
   if(!editingId)STATE[arrKey].push(newItem);
   closeModal(); renderAll(); renderAdminAll(); toast(`${capitalize(savedType)} ${wasEditing?'updated':'added'}.`,'Saved');
 }
@@ -6890,7 +7015,7 @@ function renderAdminAll(){
   document.getElementById('stat-pending').textContent=STATE.members.filter(m=>m.status==='pending').length;
   document.getElementById('stat-sermons').textContent=STATE.sermons.length;
   document.getElementById('stat-prayers').textContent=STATE.prayers.length;
-  document.getElementById('stat-events').textContent=getEventList().length;
+  document.getElementById('stat-events').textContent=getUpcomingEvents({approvedOnly:true}).length;
   document.getElementById('stat-emails').textContent=STATE.emailCampaigns.length;
   renderAdminList('sermons',STATE.sermons,s=>({title:s.title,sub:s.speaker+' · '+formatDate(s.date)}));
   renderAdminList('activities',STATE.activities,a=>({title:a.title,sub:a.meta}));
@@ -6898,6 +7023,8 @@ function renderAdminAll(){
     const bits=[formatDate(e.date),(e.time||'').trim(),(e.location||'').trim()].filter(Boolean);
     if(e.image) bits.push('🖼 picture added');
     if(SITE_EVENTS.some(s => s.id === e.id)) bits.push('🌐 live');
+    bits.push(isEventPast(e)?'📜 past':'📅 upcoming');
+    bits.push(isEventApproved(e)?'✓ approved':'⏳ draft');
     return {title:e.title||'(untitled)',sub:bits.join(' · ')||'No date set yet'};
   });
   renderAdminList('flyers',STATE.flyers,f=>({title:f.title,sub:f.when}));
@@ -7452,8 +7579,8 @@ function updateHeroFlyerLook(key, value){
 
 /* Flyers committed under assets/hero/ show for every visitor on every device. */
 const SITE_HERO_PAGES = [
-  { id:'site-musical', src:'assets/hero/musical.jpg?v=live-sync', alt:'VBS Musical — July 30-31' },
-  { id:'site-community-day', src:'assets/hero/community-day.jpg?v=live-sync', alt:'Community Day — August 1, 2026' }
+  { id:'site-musical', src:'assets/hero/musical.jpg?v=live-sync', alt:'VBS Musical — July 30-31', eventId:'e_snuv0z0' },
+  { id:'site-community-day', src:'assets/hero/community-day.jpg?v=live-sync', alt:'Community Day — August 1, 2026', eventId:'e_2gzh6v3' }
 ];
 const missingSiteHeroPages = new Set();
 
@@ -7463,20 +7590,24 @@ const SITE_EVENTS = [
     id:'e_snuv0z0',
     title:'VBS Musical',
     date:'2026-07-30',
+    endDate:'2026-07-31',
     time:'See flyer',
     location:'1291 W Broad St, St Pauls, NC 28384',
     description:'VBS Musical at St. Pauls Deliverance Center — July 30-31.',
     image:'assets/events/vbs-musical.jpg?v=events-live',
+    approved:true,
     rsvps:[]
   },
   {
     id:'e_2gzh6v3',
     title:'Community Day',
     date:'2026-08-01',
+    endDate:'2026-08-01',
     time:'',
     location:'1291 W Broad St, St Pauls, NC 28384',
     description:'',
     image:'assets/events/community-day.jpg?v=events-live',
+    approved:true,
     rsvps:[]
   }
 ];
@@ -7486,22 +7617,59 @@ function getEventList(){
   const byId = new Map();
   SITE_EVENTS.forEach(e => {
     if(!e || !e.id) return;
-    byId.set(e.id, Object.assign({}, e, { rsvps: Array.isArray(e.rsvps) ? e.rsvps.slice() : [] }));
+    byId.set(e.id, Object.assign({}, e, {
+      approved: e.approved !== false,
+      rsvps: Array.isArray(e.rsvps) ? e.rsvps.slice() : []
+    }));
   });
   STATE.events.forEach(e => {
     if(!e || !e.id) return;
     const prev = byId.get(e.id) || {};
     const merged = Object.assign({}, prev, e);
-    // Keep a usable image: local data URL/file wins; else keep published asset
     if(!(e.image||'').trim() && (prev.image||'').trim()) merged.image = prev.image;
     if(!(e.title||'').trim() && (prev.title||'').trim()) merged.title = prev.title;
     if(!(e.date||'').trim() && (prev.date||'').trim()) merged.date = prev.date;
+    if(!(e.endDate||'').trim() && (prev.endDate||'').trim()) merged.endDate = prev.endDate;
     if(!(e.location||'').trim() && (prev.location||'').trim()) merged.location = prev.location;
     if(!(e.description||'').trim() && (prev.description||'').trim()) merged.description = prev.description;
+    if(typeof e.approved !== 'boolean' && typeof prev.approved === 'boolean') merged.approved = prev.approved;
+    if(typeof merged.approved !== 'boolean') merged.approved = true;
     merged.rsvps = Array.isArray(e.rsvps) ? e.rsvps : (prev.rsvps || []);
     byId.set(e.id, merged);
   });
   return [...byId.values()].filter(e => (e.title||'').trim() || (e.image||'').trim());
+}
+
+function eventEndDateStr(e){
+  return String((e && (e.endDate || e.date)) || '').trim();
+}
+
+function isEventPast(e){
+  const d = eventEndDateStr(e);
+  if(!d) return false;
+  const end = new Date(d + 'T23:59:59');
+  if(Number.isNaN(end.getTime())) return false;
+  return end.getTime() < Date.now();
+}
+
+function isEventUpcoming(e){ return !isEventPast(e); }
+function isEventApproved(e){ return !e || e.approved !== false; }
+
+function getUpcomingEvents({approvedOnly=true}={}){
+  return getEventList()
+    .filter(e => isEventUpcoming(e) && (!approvedOnly || isEventApproved(e)))
+    .sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
+}
+
+function getPastEvents({approvedOnly=true}={}){
+  return getEventList()
+    .filter(e => isEventPast(e) && (!approvedOnly || isEventApproved(e)))
+    .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+}
+
+function getHomeEvents(){
+  // Home: approved future events only — past events leave Home immediately
+  return getUpcomingEvents({approvedOnly:true});
 }
 
 function downloadEventImageForPublish(id){
@@ -7528,7 +7696,18 @@ function downloadAllEventImagesForPublish(){
 
 function getSiteHeroPages(){
   const dismissed = new Set(STATE.dismissedSiteHeroPages || []);
-  return SITE_HERO_PAGES.filter(p => !dismissed.has(p.id) && !missingSiteHeroPages.has(p.id));
+  const events = getEventList();
+  return SITE_HERO_PAGES.filter(p => {
+    if(dismissed.has(p.id) || missingSiteHeroPages.has(p.id)) return false;
+    if(p.eventId){
+      const ev = events.find(e => e.id === p.eventId);
+      if(ev){
+        if(isEventPast(ev)) return false;
+        if(!isEventApproved(ev)) return false;
+      }
+    }
+    return true;
+  });
 }
 
 function getHeroPageList(){
@@ -7659,6 +7838,9 @@ function renderHeroPageDots(){
 }
 
 function renderCustomHeroPages(){
+  if(window._renderingHeroPages) return;
+  window._renderingHeroPages = true;
+  try {
   const track = document.getElementById('hero-page-track');
   if(!track) return;
   migrateHeroPages();
@@ -7720,6 +7902,9 @@ function renderCustomHeroPages(){
   if(slider) slider.classList.toggle('has-multiple', getHeroPageCount() > 1);
   setHeroPageIndex(STATE.heroPageIndex || 0, {restart:true});
   bindHeroPageInteractions();
+  } finally {
+    window._renderingHeroPages = false;
+  }
 }
 
 function bindHeroPageInteractions(){

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-18-home-song" />
+<meta name="spdc-build" content="2026-10-18-quiet-song" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -4560,31 +4560,27 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   overflow: hidden;
   display: none;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 10px 28px;
-  background: linear-gradient(90deg, #071833 0%, #0d2a6b 42%, #1741a8 100%);
-  color: var(--text-on-dark);
-  border-bottom: 2px solid var(--accent);
-  box-shadow: 0 10px 28px -16px rgba(7, 24, 51, 0.8);
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 3px 16px;
+  background: #0c2148;
+  color: rgba(255, 248, 225, 0.7);
+  border-bottom: 1px solid rgba(244, 197, 66, 0.18);
+  box-shadow: none;
   font-family: 'Inter Tight', sans-serif;
 }
 .home-song.is-on-home { display: flex; }
-.home-song.is-on-home ~ nav.main { top: 58px; }
+.home-song.is-on-home ~ nav.main { top: 30px; }
 .home-song[hidden] { display: none !important; }
 .home-song-meta { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .home-song-copy { min-width: 0; }
-.home-song-kicker {
-  font-size: 11px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--accent);
-  font-weight: 700;
-}
+.home-song-kicker { display: none; }
 .home-song-title {
-  font-family: 'Cinzel', serif;
-  font-size: 16px;
-  letter-spacing: .03em;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .02em;
+  opacity: 0.8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4605,16 +4601,16 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   50% { height: 16px; }
 }
 .home-song-toggle {
-  border: none;
-  background: var(--grad-gold);
-  color: var(--primary-dark);
+  border: 1px solid rgba(244, 197, 66, 0.4);
+  background: transparent;
+  color: rgba(255, 248, 225, 0.85);
   border-radius: 999px;
-  padding: 10px 18px;
-  font-weight: 700;
+  padding: 2px 9px;
+  font-weight: 600;
   font-family: 'Inter Tight', sans-serif;
-  font-size: 14px;
+  font-size: 11px;
   cursor: pointer;
-  letter-spacing: .04em;
+  letter-spacing: .03em;
   flex-shrink: 0;
 }
 .home-song-toggle:hover { filter: brightness(1.06); }
@@ -4624,7 +4620,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(90deg, #071833 0%, #0d2a6b 42%, #1741a8 100%);
+  background: #0c2148;
   pointer-events: none;
 }
 #home-song-yt, .home-song iframe {
@@ -4639,8 +4635,9 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   border: 0;
 }
 @media (max-width: 920px) {
-  .home-song { padding: 10px 16px; gap: 10px; }
-  .home-song-title { font-size: 14px; max-width: 46vw; }
+  .home-song { padding: 3px 12px; gap: 8px; }
+  .home-song-title { font-size: 11px; max-width: 42vw; }
+  .home-song.is-on-home ~ nav.main { top: 28px; }
 }
 
 </style>
@@ -4656,7 +4653,6 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   </div>
   <div style="display:flex; align-items:center;">
     <div class="social" id="topbar-social"></div>
-    <div class="topbar-auth" id="topbar-auth"></div>
   </div>
 </div>
 
@@ -5904,6 +5900,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
       <span class="spdc-mark">SPDC</span>
       © <span id="footer-year">2026</span> St. Pauls Deliverance Center · <span id="footer-domain">spdc.church</span>
     </div>
+    <span id="footer-auth"></span>
     <a class="admin-link" onclick="goPage('admin')">Admin</a>
   </div>
 </footer>
@@ -6022,6 +6019,16 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
 
 
 <script>
+(function(){
+  var h = (location.hash || '').replace(/^#/, '').split(/[?&]/)[0];
+  var ok = {about:1,leadership:1,sermons:1,activities:1,events:1,flyers:1,prayer:1,give:1,connect:1,login:1,signup:1,member:1,admin:1};
+  if (!ok[h]) return;
+  var target = document.getElementById('page-' + h);
+  if (!target) return;
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  target.classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(function(a){ a.classList.toggle('active', a.dataset.page === h); });
+})();
 /* ============================================================
    SPDC v4 — Full application logic
    ============================================================ */
@@ -6125,17 +6132,6 @@ const DEFAULT_STATE = {
       bio1:"Born in Fayetteville, North Carolina, Pastor Maurice Perkins McCormick began his spiritual journey at an early age, accepting Jesus Christ as his Lord and Savior at the age of ten. His passion for ministry developed through years of faithful service, including 21 years as a church drummer under Bishop James E. Hilton. He later served as a minister and elder at Seed of Life Divine Ministries under Bishop William Jolly. Following God's direction, Pastor McCormick and his wife, Evangelist Mary McCormick, founded St. Pauls Deliverance Center on January 10, 2026. Together, they are committed to advancing God's Kingdom through preaching, teaching, and sharing the Gospel of Jesus Christ. Their mission is to reach lost souls, strengthen families, and welcome people from all walks of life into a place of hope, healing, and faith. \"Well done, thou good and faithful servant.\" — Matthew 25:21 (KJV)",
       bio2:'With a heart for the broken, the lost, and the hungry, Pastor McCormick ministers the Word with clarity, conviction, and compassion.',
       image:'assets/leadership/maurice.jpg'
-    },
-    {
-      id:'ldr-mary',
-      name:'Mary McCormick',
-      position:'Evangelist',
-      roleLabel:'Evangelist',
-      initials:'MM',
-      verse:'',
-      bio1:'',
-      bio2:'',
-      image:'assets/leadership/mary.jpg'
     },
     {
       id:'ldr-lakecia',
@@ -6291,13 +6287,20 @@ function publicSnapshot(){
   delete snap.currentUser;
   return slimPublicValue(snap);
 }
+function leadersWithoutMary(list){
+  return (Array.isArray(list) ? list : []).filter(l => l && l.id !== 'ldr-mary' && !/^mary mccormick$/i.test(String(l.name || '')));
+}
 function applyPublicContent(data){
   if(!data || typeof data !== 'object') return;
   PUBLIC_CONTENT_KEYS.forEach(k => {
     if(typeof data[k] === 'undefined') return;
     if(k === 'settings' || k === 'texts' || k === 'social') STATE[k] = Object.assign({}, DEFAULT_STATE[k] || {}, data[k] || {});
+    else if(k === 'leaders') STATE[k] = leadersWithoutMary(data[k]);
     else STATE[k] = data[k];
   });
+  if(STATE.selectedLeaderId === 'ldr-mary' || !((STATE.leaders || []).some(l => l.id === STATE.selectedLeaderId))){
+    STATE.selectedLeaderId = (STATE.leaders && STATE.leaders[0] && STATE.leaders[0].id) || DEFAULT_STATE.selectedLeaderId;
+  }
 }
 function scheduleLivePublish(){
   if(!livePublishEnabled || suppressLivePublish) return;
@@ -6552,7 +6555,17 @@ async function submitContactForm(e){
 }
 
 /* ============================================================ NAVIGATION */
-function goPage(page){
+function rememberPage(page){
+  const next = (!page || page === 'home') ? '' : '#' + page;
+  if ((location.hash || '') === next) return;
+  try { history.pushState({ page: page || 'home' }, '', location.pathname + location.search + next); } catch (_) {}
+}
+function pageFromLocation(){
+  const h = (location.hash || '').replace(/^#/, '').split(/[?&]/)[0];
+  const ok = ['home','about','leadership','sermons','activities','events','flyers','prayer','give','connect','login','signup','member','admin'];
+  return ok.indexOf(h) >= 0 ? h : 'home';
+}
+function goPage(page, fromHash){
   if(page==='budget') page='give';
   if(page==='member'&&!STATE.currentUser) page='login';
   if(page==='admin'&&(!STATE.currentUser||STATE.currentUser.role!=='admin')){ toast('Sign in as admin first.','Login Required',true); page='login'; }
@@ -6567,8 +6580,17 @@ function goPage(page){
   if(page==='prayer') renderPrayerWall();
   if(page==='sermons') renderSermons();
   syncHomeSongForPage(page);
+  if(!fromHash) rememberPage(page);
+  else if(pageFromLocation() !== page) rememberPage(page);
   window.scrollTo({top:0,behavior:'smooth'});
 }
+window.addEventListener('hashchange', () => {
+  const next = pageFromLocation();
+  const active = document.querySelector('.page.active');
+  const current = active && active.id ? active.id.replace(/^page-/, '') : 'home';
+  if (current === next) return;
+  goPage(next, true);
+});
 
 /* ============================================================ HOME SONG */
 let homeSongWantsPlay = true;
@@ -6650,31 +6672,31 @@ function updateHomeSongButton(){
   btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
   btn.setAttribute('aria-label', playing ? 'Pause music' : 'Play music');
   btn.classList.toggle('is-playing', playing);
-  if (action) action.textContent = playing ? 'Pause music' : 'Play music';
+  if (action) action.textContent = playing ? 'Pause' : 'Play';
 }
+let homeSongAutoKicks = 0;
 function startYouTubePlayback(player){
   if (!player || !homeSongWantsPlay) return;
-  const kick = (unmute) => {
-    try {
-      if (unmute) player.unMute();
-      else player.mute();
-      player.setVolume(75);
-      player.playVideo();
-    } catch (_) {}
-  };
-  kick(true);
-  setTimeout(() => {
-    if (!homeSongWantsPlay) return;
-    let state = -1;
-    try { state = player.getPlayerState(); } catch (_) {}
-    if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) kick(false);
+  const tries = [0, 200, 600, 1400, 2600];
+  tries.forEach((ms) => {
     setTimeout(() => {
       if (!homeSongWantsPlay) return;
-      try { player.unMute(); player.setVolume(75); player.playVideo(); } catch (_) {}
+      const home = document.getElementById('page-home');
+      if (!home || !home.classList.contains('active')) return;
+      try {
+        let state = -1;
+        try { state = player.getPlayerState(); } catch (_) {}
+        if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) {
+          player.mute();
+          player.playVideo();
+        }
+        player.unMute();
+        player.setVolume(75);
+        player.playVideo();
+      } catch (_) {}
       updateHomeSongButton();
-    }, 350);
-  }, 500);
-  updateHomeSongButton();
+    }, ms);
+  });
 }
 function mountYouTubeSong(id){
   if (!resetYouTubeHost()) return;
@@ -6698,7 +6720,7 @@ function mountYouTubeSong(id){
       height: '113',
       playerVars: {
         autoplay: 1,
-        mute: 0,
+        mute: 1,
         controls: 0,
         disablekb: 1,
         fs: 0,
@@ -6716,7 +6738,16 @@ function mountYouTubeSong(id){
           if (homeSongWantsPlay && home && home.classList.contains('active')) startYouTubePlayback(e.target);
           else updateHomeSongButton();
         },
-        onStateChange: () => updateHomeSongButton(),
+        onStateChange: (ev) => {
+          updateHomeSongButton();
+          const st = ev && ev.data;
+          const playing = st === YT.PlayerState.PLAYING || st === YT.PlayerState.BUFFERING;
+          if (playing || !homeSongWantsPlay || homeSongAutoKicks > 8) return;
+          const home = document.getElementById('page-home');
+          if (!home || !home.classList.contains('active')) return;
+          homeSongAutoKicks += 1;
+          setTimeout(() => { if (homeSongWantsPlay) startYouTubePlayback(ev.target); }, 350);
+        },
         onError: () => updateHomeSongButton()
       }
     });
@@ -6856,6 +6887,11 @@ function initHomeSong(){
     }
   });
   document.addEventListener('pointerdown', onHomeSongUnlock);
+  window.addEventListener('pageshow', () => {
+    homeSongAutoKicks = 0;
+    const home = document.getElementById('page-home');
+    if (home && home.classList.contains('active') && homeSongWantsPlay && homeYtPlayer && homeYtReady) startYouTubePlayback(homeYtPlayer);
+  });
   applyHomeSong();
 }
 function closeMobile(){
@@ -6901,12 +6937,11 @@ function handleLogout(){
   STATE.currentUser=null; renderAuthState(); toast('See you soon'+(name?', '+name:'')+'!','Signed Out'); goPage('home');
 }
 function renderAuthState(){
-  const el=document.getElementById('topbar-auth'); if(!el)return;
+  const el=document.getElementById('footer-auth'); if(!el)return;
   if(STATE.currentUser){
-    const u=STATE.currentUser;
-    el.innerHTML=`<button class="primary" onclick="goPage('${u.role==='admin'?'admin':'member'}')">&nbsp;👤 ${escapeHtml(u.name.split(' ')[0])}</button><button onclick="handleLogout()">Sign Out</button>`;
+    el.innerHTML=`<button type="button" class="admin-link" onclick="handleLogout()" style="background:none;border:none;font:inherit;padding:0;margin-right:14px;">Sign out</button>`;
   } else {
-    el.innerHTML=`<button onclick="goPage('login')">Sign In</button><button class="primary" onclick="goPage('signup')">Join</button>`;
+    el.innerHTML='';
   }
 }
 
@@ -7598,13 +7633,17 @@ const PUBLISHED_LEADER_IMAGES = {
 };
 function migrateLeaders(){
   if(!Array.isArray(STATE.leaders)) STATE.leaders = [];
+  const kept = leadersWithoutMary(STATE.leaders);
+  const removedMary = kept.length !== STATE.leaders.length || STATE.selectedLeaderId === 'ldr-mary';
+  if(kept.length !== STATE.leaders.length) STATE.leaders = kept;
+  if(STATE.selectedLeaderId === 'ldr-mary') STATE.selectedLeaderId = '';
   if(!STATE.leaders.length){
     STATE.leaders = JSON.parse(JSON.stringify(DEFAULT_STATE.leaders));
     STATE.selectedLeaderId = DEFAULT_STATE.selectedLeaderId;
     try { saveState(); } catch(_){}
     return;
   }
-  let patched = false;
+  let patched = removedMary;
   STATE.leaders.forEach((l, i) => {
     const published = PUBLISHED_LEADER_IMAGES[l.id];
     const img = String(l.image||'');
@@ -8462,6 +8501,8 @@ function renderAll(){
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
+  const startPage = pageFromLocation();
+  if (startPage !== 'home') goPage(startPage, true);
   DEFAULT_LOGO=document.getElementById('nav-logo').src;
   DEFAULT_SIGN=document.querySelector('.welcome-img img').src;
   document.getElementById('footer-year').textContent=new Date().getFullYear();

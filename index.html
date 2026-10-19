@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-11-remove-budget" />
+<meta name="spdc-build" content="2026-10-18-leadership-photos" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -892,7 +892,7 @@ section.spdc { padding: 100px 28px; position: relative; z-index: 2; }
   background: linear-gradient(180deg, transparent 55%, rgba(5, 13, 36, 0.35) 100%);
   pointer-events: none;
 }
-.leader-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.leader-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
 .leader-portrait .placeholder {
   color: var(--accent-light);
   text-align: center;
@@ -6001,7 +6001,7 @@ const DEFAULT_STATE = {
       verse:'"For the kingdom of God is not in word, but in power." — 1 Corinthians 4:20',
       bio1:'Pastor Maurice McCormick is the founding shepherd of St. Pauls Deliverance Center, called by God to lead a people into deep relationship with Jesus Christ.',
       bio2:'With a heart for the broken, the lost, and the hungry, Pastor McCormick ministers the Word with clarity, conviction, and compassion.',
-      image:null
+      image:'assets/leadership/maurice.jpg'
     },
     {
       id:'ldr-mary',
@@ -6012,7 +6012,7 @@ const DEFAULT_STATE = {
       verse:'',
       bio1:'',
       bio2:'',
-      image:null
+      image:'assets/leadership/mary.jpg'
     },
     {
       id:'ldr-lakecia',
@@ -6023,7 +6023,7 @@ const DEFAULT_STATE = {
       verse:'',
       bio1:'',
       bio2:'',
-      image:null
+      image:'assets/leadership/lakecia.jpg'
     }
   ],
   selectedLeaderId:'ldr-maurice',
@@ -7077,6 +7077,11 @@ function renderFlyers(){
     <div class="content"><h4>${f.title}</h4><div class="subtitle">${f.subtitle}</div><div class="when">${f.when}</div></div>
   </div><div class="meta"><h5>${escapeHtml(f.title)}</h5><p>${escapeHtml(f.description)}</p></div></div>`).join('');
 }
+const PUBLISHED_LEADER_IMAGES = {
+  'ldr-maurice':'assets/leadership/maurice.jpg',
+  'ldr-mary':'assets/leadership/mary.jpg',
+  'ldr-lakecia':'assets/leadership/lakecia.jpg'
+};
 function migrateLeaders(){
   if(!Array.isArray(STATE.leaders)) STATE.leaders = [];
   if(!STATE.leaders.length){
@@ -7087,6 +7092,12 @@ function migrateLeaders(){
   }
   let patched = false;
   STATE.leaders.forEach((l, i) => {
+    const published = PUBLISHED_LEADER_IMAGES[l.id];
+    const img = String(l.image||'');
+    if(published && (!img || img.startsWith('data:'))){
+      l.image = published;
+      patched = true;
+    }
     if(typeof l.roleLabel === 'undefined'){ l.roleLabel = l.position || ''; patched = true; }
     if(typeof l.verse === 'undefined'){
       l.verse = (i===0 && STATE.texts && STATE.texts.pastorVerse) ? STATE.texts.pastorVerse : '';

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-18-sync-live-canonical" />
+<meta name="spdc-build" content="2026-10-18-keep-leader-uploads" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -7093,10 +7093,16 @@ function migrateLeaders(){
   let patched = false;
   STATE.leaders.forEach((l, i) => {
     const published = PUBLISHED_LEADER_IMAGES[l.id];
-    // Always prefer the published leadership photos so every browser matches live
-    if(published && String(l.image||'') !== published){
-      l.image = published;
-      patched = true;
+    const img = String(l.image||'');
+    // Keep Admin-uploaded photos (data URLs) and leadership assets; only fill blanks / replace junk paths
+    if(published){
+      if(!img){
+        l.image = published;
+        patched = true;
+      } else if(!img.startsWith('data:') && !img.startsWith('assets/leadership/')){
+        l.image = published;
+        patched = true;
+      }
     }
     if(typeof l.roleLabel === 'undefined'){ l.roleLabel = l.position || ''; patched = true; }
     if(typeof l.verse === 'undefined'){

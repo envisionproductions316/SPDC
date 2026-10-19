@@ -4556,7 +4556,8 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
 .home-song {
   position: sticky;
   top: 0;
-  z-index: 45;
+  z-index: 46;
+  overflow: hidden;
   display: none;
   align-items: center;
   justify-content: space-between;
@@ -4617,13 +4618,23 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   flex-shrink: 0;
 }
 .home-song-toggle:hover { filter: brightness(1.06); }
+.home-song-meta, .home-song-toggle { position: relative; z-index: 2; }
+.home-song::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, #071833 0%, #0d2a6b 42%, #1741a8 100%);
+  pointer-events: none;
+}
 #home-song-yt, .home-song iframe {
-  position: fixed;
-  width: 1px;
-  height: 1px;
-  left: -9999px;
+  position: absolute !important;
   top: 0;
-  opacity: 0;
+  left: 0;
+  width: 100% !important;
+  height: 180px !important;
+  z-index: 0;
+  opacity: 1;
   pointer-events: none;
   border: 0;
 }
@@ -6641,6 +6652,30 @@ function updateHomeSongButton(){
   btn.classList.toggle('is-playing', playing);
   if (action) action.textContent = playing ? 'Pause music' : 'Play music';
 }
+function startYouTubePlayback(player){
+  if (!player || !homeSongWantsPlay) return;
+  const kick = (unmute) => {
+    try {
+      if (unmute) player.unMute();
+      else player.mute();
+      player.setVolume(75);
+      player.playVideo();
+    } catch (_) {}
+  };
+  kick(true);
+  setTimeout(() => {
+    if (!homeSongWantsPlay) return;
+    let state = -1;
+    try { state = player.getPlayerState(); } catch (_) {}
+    if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) kick(false);
+    setTimeout(() => {
+      if (!homeSongWantsPlay) return;
+      try { player.unMute(); player.setVolume(75); player.playVideo(); } catch (_) {}
+      updateHomeSongButton();
+    }, 350);
+  }, 500);
+  updateHomeSongButton();
+}
 function mountYouTubeSong(id){
   if (!resetYouTubeHost()) return;
   ensureYouTubeAPI().then(() => {
@@ -6662,7 +6697,8 @@ function mountYouTubeSong(id){
       width: '200',
       height: '113',
       playerVars: {
-        autoplay: homeSongWantsPlay ? 1 : 0,
+        autoplay: 1,
+        mute: 0,
         controls: 0,
         disablekb: 1,
         fs: 0,
@@ -6676,10 +6712,9 @@ function mountYouTubeSong(id){
       events: {
         onReady: (e) => {
           homeYtReady = true;
-          try { e.target.setVolume(70); } catch (_) {}
           const home = document.getElementById('page-home');
-          if (homeSongWantsPlay && home && home.classList.contains('active')) e.target.playVideo();
-          updateHomeSongButton();
+          if (homeSongWantsPlay && home && home.classList.contains('active')) startYouTubePlayback(e.target);
+          else updateHomeSongButton();
         },
         onStateChange: () => updateHomeSongButton(),
         onError: () => updateHomeSongButton()
@@ -6690,7 +6725,7 @@ function mountYouTubeSong(id){
 function playHomeSong(){
   const id = youtubeVideoId(homeSongConfig().url);
   if (id) {
-    if (homeYtPlayer && homeYtReady) homeYtPlayer.playVideo();
+    if (homeYtPlayer && homeYtReady) startYouTubePlayback(homeYtPlayer);
     else if (!homeYtPlayer) mountYouTubeSong(id);
     updateHomeSongButton();
     return;

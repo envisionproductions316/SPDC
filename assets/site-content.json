@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-19T02:45:00.000Z",
+  "theme": "default",
+  "customAccent": null,
+  "heroTheme": "classic",
+  "settings": {
+    "churchName": "St. Pauls Deliverance Center",
+    "abbrev": "SPDC",
+    "bannerVerse": "\"Behold, I will do a new thing.\" — Isaiah 43:19",
+    "contactEmail": "hello@spdc.church",
+    "address": "1291 W Broad St, St Pauls, NC 28384",
+    "phone": "",
+    "domain": "spdc.church",
+    "requireApproval": true,
+    "homeSongTitle": "Worship",
+    "homeSongUrl": "assets/audio/home-song.mp3",
+    "homeSongAutoplay": true
+  },
+  "texts": {
+    "heroSubtitle": "Welcome to St. Pauls Deliverance Center — a sanctuary where heaven touches earth, lives are transformed, and the Spirit of God moves freely. Come as you are. Leave changed.",
+    "welcomeHeading": "Where the Anointing Breaks Every Yoke.",
+    "welcomePara1": "St. Pauls Deliverance Center (SPDC) is more than a church — it's a family, a refuge, and a launching pad for destiny. Whether you're seeking healing, hope, or a deeper walk with Christ, you'll find a place to belong here.",
+    "welcomePara2": "We believe in the power of the Holy Spirit to transform lives. Our doors are open to all who hunger for the presence of God.",
+    "missionHeading": "Carrying the Gospel With Power.",
+    "missionText1": "St. Pauls Deliverance Center exists to be a beacon of God's love in our community and a sending station for laborers into the global harvest.",
+    "missionText2": "Founded on the unshakeable Word of God, SPDC stands upon the apostolic foundations: prayer, evangelism, signs, and wonders.",
+    "pastorVerse": "\"For the kingdom of God is not in word, but in power.\" — 1 Corinthians 4:20",
+    "pastorBio1": "Born in Fayetteville, North Carolina, Pastor Maurice Perkins McCormick began his spiritual journey at an early age, accepting Jesus Christ as his Lord and Savior at the age of ten. His passion for ministry developed through years of faithful service, including 21 years as a church drummer under Bishop James E. Hilton. He later served as a minister and elder at Seed of Life Divine Ministries under Bishop William Jolly. Following God's direction, Pastor McCormick and his wife, Evangelist Mary McCormick, founded St. Pauls Deliverance Center on January 10, 2026. Together, they are committed to advancing God's Kingdom through preaching, teaching, and sharing the Gospel of Jesus Christ. Their mission is to reach lost souls, strengthen families, and welcome people from all walks of life into a place of hope, healing, and faith. \"Well done, thou good and faithful servant.\" — Matthew 25:21 (KJV)",
+    "pastorBio2": "With a heart for the broken, the lost, and the hungry, Pastor McCormick ministers the Word with clarity, conviction, and compassion.",
+    "givingIntro": "\"Bring ye all the tithes into the storehouse... prove me now herewith, saith the Lord of hosts, if I will not open you the windows of heaven.\" — Malachi 3:10"
+  },
+  "social": { "facebook": "", "instagram": "", "youtube": "", "tiktok": "" },
+  "selectedLeaderId": "ldr-maurice",
+  "leaders": [
+    {
+      "id": "ldr-maurice",
+      "name": "Maurice McCormick",
+      "position": "Pastor",
+      "roleLabel": "Founder and Senior Pastor | St. Pauls Deliverance Center",
+      "initials": "MM",
+      "verse": "\"For the kingdom of God is not in word, but in power.\" — 1 Corinthians 4:20",
+      "bio1": "Born in Fayetteville, North Carolina, Pastor Maurice Perkins McCormick began his spiritual journey at an early age, accepting Jesus Christ as his Lord and Savior at the age of ten. His passion for ministry developed through years of faithful service, including 21 years as a church drummer under Bishop James E. Hilton. He later served as a minister and elder at Seed of Life Divine Ministries under Bishop William Jolly. Following God's direction, Pastor McCormick and his wife, Evangelist Mary McCormick, founded St. Pauls Deliverance Center on January 10, 2026. Together, they are committed to advancing God's Kingdom through preaching, teaching, and sharing the Gospel of Jesus Christ. Their mission is to reach lost souls, strengthen families, and welcome people from all walks of life into a place of hope, healing, and faith. \"Well done, thou good and faithful servant.\" — Matthew 25:21 (KJV)",
+      "bio2": "With a heart for the broken, the lost, and the hungry, Pastor McCormick ministers the Word with clarity, conviction, and compassion.",
+      "image": "assets/leadership/maurice.jpg"
+    },
+    {
+      "id": "ldr-mary",
+      "name": "Mary McCormick",
+      "position": "Evangelist",
+      "roleLabel": "Evangelist",
+      "initials": "MM",
+      "verse": "",
+      "bio1": "",
+      "bio2": "",
+      "image": "assets/leadership/mary.jpg"
+    },
+    {
+      "id": "ldr-lakecia",
+      "name": "Lakecia Minus",
+      "position": "Evangelist",
+      "roleLabel": "Evangelist | Leader | Servant of God",
+      "initials": "LM",
+      "verse": "\"Many are called, but few are chosen.\" — Matthew 22:14",
+      "bio1": "I believe God has called me for such a time as this, with a purpose that extends beyond myself to my family, my community, and future generations. As a child of God, mother, evangelist, leader, business owner, advocate, friend, and confidant, I embrace every opportunity to teach, preach, educate, empower, and make a meaningful difference in the lives of others. Above all, I am a servant of God, committed to walking in His purpose, leading with integrity, and leaving a legacy of faith, service, and lasting impact. \"And who knoweth whether thou art come to the kingdom for such a time as this?\" — Esther 4:14 (KJV)",
+      "bio2": "",
+      "image": "assets/leadership/lakecia.jpg"
+    }
+  ]
+}

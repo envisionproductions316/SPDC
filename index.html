@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-18-keep-leader-uploads" />
+<meta name="spdc-build" content="2026-10-18-home-song" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -4552,6 +4552,53 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   .hero-flyer-slot { max-width: 340px; width: min(100%, 340px); margin: 0 auto 30px; }
 }
 
+/* Home page song — fixed to the viewport so the page animation does not trap it */
+.home-song {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 36;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  max-width: calc(100vw - 32px);
+  padding: 8px 8px 8px 16px;
+  background: var(--grad-royal);
+  color: var(--text-on-dark);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  box-shadow: var(--shadow-deep);
+  font-family: 'Inter Tight', sans-serif;
+}
+.home-song.is-on-home { display: flex; }
+.home-song[hidden] { display: none !important; }
+.home-song-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: .04em;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.home-song-toggle {
+  border: none;
+  background: var(--grad-gold);
+  color: var(--primary-dark);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  letter-spacing: .06em;
+}
+.home-song-toggle:hover { filter: brightness(1.05); }
+@media (max-width: 920px) {
+  .home-song { left: 12px; right: 12px; bottom: 12px; justify-content: space-between; }
+  .home-song-title { max-width: none; flex: 1; }
+}
+
 </style>
 
 <a href="#main" class="skip-link">Skip to content</a>
@@ -4790,10 +4837,10 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
           </div>
         </div>
         <div class="leader-info">
-          <div class="role" id="leaderSpotlightRole">Senior Pastor &amp; Visionary Leader</div>
-          <h2 id="pastorName">Pastor Maurice McCormick</h2>
+          <div class="role" id="leaderSpotlightRole">Founder and Senior Pastor | St. Pauls Deliverance Center</div>
+          <h2 id="pastorName">Maurice McCormick</h2>
           <div class="verse-quote" id="pastorVerse">"For the kingdom of God is not in word, but in power." — 1 Corinthians 4:20</div>
-          <p id="pastorBio1">Pastor Maurice McCormick is the founding shepherd of St. Pauls Deliverance Center, called by God to lead a people into deep relationship with Jesus Christ and bold demonstration of His power.</p>
+          <p id="pastorBio1">Born in Fayetteville, North Carolina, Pastor Maurice Perkins McCormick began his spiritual journey at an early age, accepting Jesus Christ as his Lord and Savior at the age of ten. His passion for ministry developed through years of faithful service, including 21 years as a church drummer under Bishop James E. Hilton. He later served as a minister and elder at Seed of Life Divine Ministries under Bishop William Jolly. Following God's direction, Pastor McCormick and his wife, Evangelist Mary McCormick, founded St. Pauls Deliverance Center on January 10, 2026. Together, they are committed to advancing God's Kingdom through preaching, teaching, and sharing the Gospel of Jesus Christ. Their mission is to reach lost souls, strengthen families, and welcome people from all walks of life into a place of hope, healing, and faith. "Well done, thou good and faithful servant." — Matthew 25:21 (KJV)</p>
           <p id="pastorBio2">With a heart for the broken, the lost, and the hungry, Pastor McCormick ministers the Word with clarity, conviction, and compassion.</p>
         </div>
       </div>
@@ -5707,7 +5754,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
           <input class="editable-field" id="edit-abbrev" />
           <label class="field-label">Top Banner Verse</label>
           <input class="editable-field" id="edit-bannerVerse" />
-          <label class="field-label">Contact Email (receives website messages — not shown publicly)</label>
+          <label class="field-label">Contact Email (shown in the footer and used for Email Us)</label>
           <input class="editable-field" id="edit-contactEmail" placeholder="yourchurch@gmail.com" />
           <p style="font-size:12px;color:var(--ink-mute);margin:6px 0 14px;font-family:'Inter Tight',sans-serif;">Visitors use the Email Us form on Connect. Put your Gmail here so their messages are delivered to you. The first message may ask you to confirm the address with FormSubmit.</p>
           <label class="field-label">Church Address (full, for map links)</label>
@@ -5721,6 +5768,20 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
             <input type="checkbox" id="setting-require-approval" checked style="width:18px;height:18px;" />
             Require admin approval for new signups
           </label>
+          <div class="section-label">Home Page Song</div>
+          <label class="field-label">Song title</label>
+          <input class="editable-field" id="edit-homeSongTitle" placeholder="Worship" />
+          <label class="field-label">Song file or direct audio link</label>
+          <input class="editable-field" id="edit-homeSongUrl" placeholder="assets/audio/home-song.mp3" />
+          <p style="font-size:12px;color:var(--ink-mute);margin:6px 0 14px;font-family:'Inter Tight',sans-serif;">Place an mp3, m4a, or wav at assets/audio/home-song.mp3, or paste a direct link to the audio file. The song starts on the home page. Visitors can pause it. Playback pauses when they leave Home and resumes when they come back, unless they paused it themselves.</p>
+          <label style="display:flex;align-items:center;gap:10px;font-family:'Inter Tight',sans-serif;font-size:14px;color:var(--ink);cursor:pointer;margin-bottom:14px;">
+            <input type="checkbox" id="setting-home-song-autoplay" checked style="width:18px;height:18px;" />
+            Play automatically on the home page
+          </label>
+          <div class="section-label">Live Site</div>
+          <label class="field-label">Live publish key (this browser only)</label>
+          <input class="editable-field" id="edit-publishKey" type="password" autocomplete="off" placeholder="Paste once, then Save Settings" />
+          <p id="publish-key-status" style="font-size:12px;color:var(--ink-mute);margin:6px 0 14px;font-family:'Inter Tight',sans-serif;">Paste the live publish key so saves update spdc.church for every visitor. The key stays on this browser and is not shown on the public site.</p>
           <div class="save-bar">
             <button class="btn-save" onclick="saveSettings()">💾 Save Settings</button>
             <button class="add-btn" style="background:#a83232;color:white;" onclick="resetEverything()">⚠ Reset All</button>
@@ -5964,7 +6025,7 @@ const DEFAULT_STATE = {
     missionText1:"St. Pauls Deliverance Center exists to be a beacon of God's love in our community and a sending station for laborers into the global harvest.",
     missionText2:"Founded on the unshakeable Word of God, SPDC stands upon the apostolic foundations: prayer, evangelism, signs, and wonders.",
     pastorVerse:'"For the kingdom of God is not in word, but in power." — 1 Corinthians 4:20',
-    pastorBio1:"Pastor Maurice McCormick is the founding shepherd of St. Pauls Deliverance Center, called by God to lead a people into deep relationship with Jesus Christ.",
+    pastorBio1:"Born in Fayetteville, North Carolina, Pastor Maurice Perkins McCormick began his spiritual journey at an early age, accepting Jesus Christ as his Lord and Savior at the age of ten. His passion for ministry developed through years of faithful service, including 21 years as a church drummer under Bishop James E. Hilton. He later served as a minister and elder at Seed of Life Divine Ministries under Bishop William Jolly. Following God's direction, Pastor McCormick and his wife, Evangelist Mary McCormick, founded St. Pauls Deliverance Center on January 10, 2026. Together, they are committed to advancing God's Kingdom through preaching, teaching, and sharing the Gospel of Jesus Christ. Their mission is to reach lost souls, strengthen families, and welcome people from all walks of life into a place of hope, healing, and faith. \"Well done, thou good and faithful servant.\" — Matthew 25:21 (KJV)",
     pastorBio2:"With a heart for the broken, the lost, and the hungry, Pastor McCormick ministers the Word with clarity, conviction, and compassion.",
     givingIntro:'"Bring ye all the tithes into the storehouse... prove me now herewith, saith the Lord of hosts, if I will not open you the windows of heaven." — Malachi 3:10'
   },
@@ -5976,7 +6037,10 @@ const DEFAULT_STATE = {
     address:"1291 W Broad St, St Pauls, NC 28384",
     phone:"",
     domain:"spdc.church",
-    requireApproval:true
+    requireApproval:true,
+    homeSongTitle:"Worship",
+    homeSongUrl:"assets/audio/home-song.mp3",
+    homeSongAutoplay:true
   },
   social:{ facebook:"", instagram:"", youtube:"", tiktok:"" },
   sermons:[],
@@ -5994,12 +6058,12 @@ const DEFAULT_STATE = {
   leaders:[
     {
       id:'ldr-maurice',
-      name:'Pastor Maurice McCormick',
+      name:'Maurice McCormick',
       position:'Pastor',
-      roleLabel:'Senior Pastor & Visionary Leader',
+      roleLabel:'Founder and Senior Pastor | St. Pauls Deliverance Center',
       initials:'MM',
       verse:'"For the kingdom of God is not in word, but in power." — 1 Corinthians 4:20',
-      bio1:'Pastor Maurice McCormick is the founding shepherd of St. Pauls Deliverance Center, called by God to lead a people into deep relationship with Jesus Christ.',
+      bio1:"Born in Fayetteville, North Carolina, Pastor Maurice Perkins McCormick began his spiritual journey at an early age, accepting Jesus Christ as his Lord and Savior at the age of ten. His passion for ministry developed through years of faithful service, including 21 years as a church drummer under Bishop James E. Hilton. He later served as a minister and elder at Seed of Life Divine Ministries under Bishop William Jolly. Following God's direction, Pastor McCormick and his wife, Evangelist Mary McCormick, founded St. Pauls Deliverance Center on January 10, 2026. Together, they are committed to advancing God's Kingdom through preaching, teaching, and sharing the Gospel of Jesus Christ. Their mission is to reach lost souls, strengthen families, and welcome people from all walks of life into a place of hope, healing, and faith. \"Well done, thou good and faithful servant.\" — Matthew 25:21 (KJV)",
       bio2:'With a heart for the broken, the lost, and the hungry, Pastor McCormick ministers the Word with clarity, conviction, and compassion.',
       image:'assets/leadership/maurice.jpg'
     },
@@ -6018,10 +6082,10 @@ const DEFAULT_STATE = {
       id:'ldr-lakecia',
       name:'Lakecia Minus',
       position:'Evangelist',
-      roleLabel:'Evangelist',
+      roleLabel:'Evangelist | Leader | Servant of God',
       initials:'LM',
-      verse:'',
-      bio1:'',
+      verse:'"Many are called, but few are chosen." — Matthew 22:14',
+      bio1:'I believe God has called me for such a time as this, with a purpose that extends beyond myself to my family, my community, and future generations. As a child of God, mother, evangelist, leader, business owner, advocate, friend, and confidant, I embrace every opportunity to teach, preach, educate, empower, and make a meaningful difference in the lives of others. Above all, I am a servant of God, committed to walking in His purpose, leading with integrity, and leaving a legacy of faith, service, and lasting impact. "And who knoweth whether thou art come to the kingdom for such a time as this?" — Esther 4:14 (KJV)',
       bio2:'',
       image:'assets/leadership/lakecia.jpg'
     }
@@ -6120,6 +6184,7 @@ function buildPersistableState(){
 function saveState(){
   try {
     localStorage.setItem(SPDC_STORAGE_KEY, JSON.stringify(buildPersistableState()));
+    scheduleLivePublish();
     return true;
   } catch (err) {
     if (err && err.name === 'QuotaExceededError') {
@@ -6143,6 +6208,91 @@ function saveState(){
   }
 }
 loadPersistedState();
+const LIVE_CONTENT_URL = 'https://spdc-live.support-551.workers.dev/content';
+const LIVE_CONTENT_FALLBACK = 'assets/site-content.json';
+const PUBLIC_CONTENT_KEYS = ['settings','texts','social','leaders','selectedLeaderId','services','activities','sermons','events','flyers','givingMethods','theme','customAccent','heroTheme','heroFlyerSpeed','heroPages','heroFlyers','heroBrandEnabled','heroPageSpeed','heroFlyerFrame','heroFlyerSize','heroFlyerFit','heroFlyerStage','heroFlyerCaption'];
+let livePublishEnabled = false;
+let suppressLivePublish = false;
+let publishTimer = null;
+
+function slimPublicValue(value){
+  if(typeof value === 'string') return (value.startsWith('data:') && value.length > 400000) ? '' : value;
+  if(Array.isArray(value)) return value.map(slimPublicValue);
+  if(value && typeof value === 'object'){
+    const out = {};
+    Object.keys(value).forEach(k => { out[k] = slimPublicValue(value[k]); });
+    return out;
+  }
+  return value;
+}
+function publicSnapshot(){
+  const snap = { version: 1, updatedAt: new Date().toISOString() };
+  PUBLIC_CONTENT_KEYS.forEach(k => { if(typeof STATE[k] !== 'undefined') snap[k] = STATE[k]; });
+  delete snap.members;
+  delete snap.currentUser;
+  return slimPublicValue(snap);
+}
+function applyPublicContent(data){
+  if(!data || typeof data !== 'object') return;
+  PUBLIC_CONTENT_KEYS.forEach(k => {
+    if(typeof data[k] === 'undefined') return;
+    if(k === 'settings' || k === 'texts' || k === 'social') STATE[k] = Object.assign({}, DEFAULT_STATE[k] || {}, data[k] || {});
+    else STATE[k] = data[k];
+  });
+}
+function scheduleLivePublish(){
+  if(!livePublishEnabled || suppressLivePublish) return;
+  clearTimeout(publishTimer);
+  publishTimer = setTimeout(() => { publishLiveContent(false); }, 700);
+}
+async function publishLiveContent(announce){
+  const key = (localStorage.getItem('spdc_publish_key') || '').trim();
+  if(!key){
+    if(announce) toast('Saved on this browser. Paste the live publish key in Admin → Settings so everyone sees it.', 'Not on the live site yet', true);
+    return false;
+  }
+  try {
+    const res = await fetch(LIVE_CONTENT_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-SPDC-Key': key },
+      body: JSON.stringify(publicSnapshot())
+    });
+    if(!res.ok){
+      if(announce) toast('The live site did not accept this update. Check the publish key.', 'Live update failed', true);
+      return false;
+    }
+    if(announce) toast('The live site is updated for every visitor.', 'Published');
+    const status = document.getElementById('publish-key-status');
+    if(status) status.textContent = 'This browser updates the live site for every visitor.';
+    return true;
+  } catch (err) {
+    console.warn('SPDC: live publish failed', err);
+    if(announce) toast('Could not reach the live site. This browser still has the change.', 'Live update failed', true);
+    return false;
+  }
+}
+async function hydrateLiveContent(){
+  const urls = [LIVE_CONTENT_URL, LIVE_CONTENT_FALLBACK];
+  for(const url of urls){
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if(!res.ok) continue;
+      const data = await res.json();
+      if(!data || data.empty || (!data.settings && !data.leaders && !data.texts)) continue;
+      suppressLivePublish = true;
+      applyPublicContent(data);
+      renderAll();
+      if(typeof loadTextsIntoEditor === 'function') loadTextsIntoEditor();
+      if(typeof loadSettingsIntoEditor === 'function') loadSettingsIntoEditor();
+      if(typeof applyTheme === 'function' && STATE.theme) applyTheme(STATE.theme);
+      return;
+    } catch (err) {
+      console.warn('SPDC: live content fetch failed', url, err);
+    } finally {
+      suppressLivePublish = false;
+    }
+  }
+}
 let DEFAULT_LOGO = null;
 let DEFAULT_SIGN = null;
 let imgPickerTarget = null;
@@ -6357,7 +6507,158 @@ function goPage(page){
   if(page==='events') renderEvents();
   if(page==='prayer') renderPrayerWall();
   if(page==='sermons') renderSermons();
+  syncHomeSongForPage(page);
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============================================================ HOME SONG */
+let homeSongWantsPlay = true;
+let homeSongReady = false;
+
+function homeSongAudio(){ return document.getElementById('home-song-audio'); }
+function homeSongConfig(){
+  const s = (STATE && STATE.settings) || {};
+  return {
+    title: (s.homeSongTitle || 'Worship').trim() || 'Worship',
+    url: (s.homeSongUrl || '').trim(),
+    autoplay: s.homeSongAutoplay !== false
+  };
+}
+function updateHomeSongButton(){
+  const audio = homeSongAudio();
+  const btn = document.getElementById('home-song-toggle');
+  const action = document.getElementById('home-song-action');
+  if (!audio || !btn) return;
+  if (audio.dataset.broken === '1') {
+    btn.setAttribute('aria-pressed', 'false');
+    btn.setAttribute('aria-label', 'Song file is missing');
+    btn.classList.remove('is-playing');
+    if (action) action.textContent = 'Add file';
+    return;
+  }
+  const playing = !audio.paused && !audio.ended;
+  btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
+  btn.setAttribute('aria-label', playing ? 'Pause song' : 'Play song');
+  btn.classList.toggle('is-playing', playing);
+  if (action) action.textContent = playing ? 'Pause' : 'Play';
+}
+function onHomeSongUnlock(e){
+  if (e.target && e.target.closest && e.target.closest('#home-song')) return;
+  if (!homeSongWantsPlay) return;
+  const home = document.getElementById('page-home');
+  if (!home || !home.classList.contains('active')) return;
+  const audio = homeSongAudio();
+  if (!audio || audio.dataset.broken === '1' || !audio.src || !audio.paused) return;
+  audio.play().then(updateHomeSongButton).catch(() => {});
+}
+function applyHomeSong(){
+  const audio = homeSongAudio();
+  const wrap = document.getElementById('home-song');
+  const label = document.getElementById('home-song-label');
+  if (!audio || !wrap) return;
+  const cfg = homeSongConfig();
+  if (label) label.textContent = cfg.title;
+  if (!cfg.url) {
+    wrap.hidden = true;
+    audio.removeAttribute('src');
+    audio.dataset.src = '';
+    audio.dataset.broken = '0';
+    audio.pause();
+    return;
+  }
+  wrap.hidden = false;
+  let next = cfg.url;
+  try { next = new URL(cfg.url, window.location.href).href; } catch (_) {}
+  const autoFlag = cfg.autoplay ? '1' : '0';
+  if (audio.dataset.autoplay !== autoFlag) {
+    audio.dataset.autoplay = autoFlag;
+    homeSongWantsPlay = cfg.autoplay;
+    if (!cfg.autoplay) audio.pause();
+  }
+  if (audio.dataset.src !== next) {
+    audio.dataset.src = next;
+    audio.dataset.broken = '0';
+    homeSongWantsPlay = cfg.autoplay;
+    audio.src = cfg.url;
+    audio.loop = true;
+    audio.volume = 0.7;
+    audio.load();
+  }
+  const active = document.querySelector('.page.active');
+  const page = active && active.id ? active.id.replace(/^page-/, '') : 'home';
+  syncHomeSongForPage(page);
+}
+function syncHomeSongForPage(page){
+  const wrap = document.getElementById('home-song');
+  const audio = homeSongAudio();
+  if (wrap) wrap.classList.toggle('is-on-home', page === 'home' && !wrap.hidden);
+  if (!audio) return;
+  if (page === 'home') {
+    if (homeSongWantsPlay && audio.dataset.broken !== '1' && audio.src) {
+      audio.play().then(updateHomeSongButton).catch(() => updateHomeSongButton());
+    } else {
+      updateHomeSongButton();
+    }
+  } else {
+    audio.pause();
+    updateHomeSongButton();
+  }
+}
+function toggleHomeSong(){
+  const audio = homeSongAudio();
+  if (!audio) return;
+  if (audio.dataset.broken === '1' || !audio.getAttribute('src')) {
+    toast('Add the song at assets/audio/home-song.mp3, or paste a direct audio link in Admin → Settings.', 'Song Not Added', true);
+    return;
+  }
+  if (audio.paused) {
+    homeSongWantsPlay = true;
+    audio.play().then(updateHomeSongButton).catch(() => {
+      toast('This browser blocked automatic playback. Press Play once more.', 'Press Play', true);
+      updateHomeSongButton();
+    });
+  } else {
+    homeSongWantsPlay = false;
+    audio.pause();
+    updateHomeSongButton();
+  }
+}
+function initHomeSong(){
+  if (homeSongReady) return;
+  const audio = homeSongAudio();
+  if (!audio) return;
+  homeSongReady = true;
+  audio.loop = true;
+  audio.volume = 0.7;
+  homeSongWantsPlay = !STATE.settings || STATE.settings.homeSongAutoplay !== false;
+  audio.addEventListener('play', updateHomeSongButton);
+  audio.addEventListener('pause', updateHomeSongButton);
+  audio.addEventListener('error', () => {
+    audio.dataset.broken = '1';
+    const wrap = document.getElementById('home-song');
+    const admin = STATE.currentUser && STATE.currentUser.role === 'admin';
+    if (wrap) wrap.hidden = !admin;
+    updateHomeSongButton();
+  });
+  audio.addEventListener('loadeddata', () => {
+    audio.dataset.broken = '0';
+    const wrap = document.getElementById('home-song');
+    if (wrap && homeSongConfig().url) wrap.hidden = false;
+    updateHomeSongButton();
+    const home = document.getElementById('page-home');
+    if (homeSongWantsPlay && home && home.classList.contains('active')) {
+      audio.play().then(updateHomeSongButton).catch(() => {});
+    }
+  });
+  document.addEventListener('pointerdown', onHomeSongUnlock);
+  applyHomeSong();
+  if (audio.error) {
+    audio.dataset.broken = '1';
+    const wrap = document.getElementById('home-song');
+    const admin = STATE.currentUser && STATE.currentUser.role === 'admin';
+    if (wrap) wrap.hidden = !admin;
+    updateHomeSongButton();
+  }
 }
 function closeMobile(){
   document.getElementById('navLinks').classList.remove('open');
@@ -6963,6 +7264,7 @@ function applyTheme(id){
   STATE.theme=id;
   if(STATE.customAccent) applyAccentColor(STATE.customAccent);
   renderThemes();
+  saveState();
 }
 function applyAccentColor(hex){
   const r=document.documentElement;
@@ -7014,7 +7316,19 @@ function resetSign(){ applySignImage(DEFAULT_SIGN); toast('Hero image reset.','R
 
 /* ============================================================ TEXTS / SETTINGS */
 function loadTextsIntoEditor(){ Object.keys(STATE.texts).forEach(k=>{const el=document.getElementById('edit-'+k);if(el)el.value=STATE.texts[k];}); }
-function saveTexts(){ Object.keys(STATE.texts).forEach(k=>{const el=document.getElementById('edit-'+k);if(el)STATE.texts[k]=el.value;}); renderTexts(); toast('Text saved.','Saved'); }
+function saveTexts(){
+  Object.keys(STATE.texts).forEach(k=>{const el=document.getElementById('edit-'+k);if(el)STATE.texts[k]=el.value;});
+  const pastor = (STATE.leaders||[]).find(l => l.id === 'ldr-maurice') || (STATE.leaders||[])[0];
+  if(pastor){
+    pastor.verse = STATE.texts.pastorVerse || '';
+    pastor.bio1 = STATE.texts.pastorBio1 || '';
+    pastor.bio2 = STATE.texts.pastorBio2 || '';
+  }
+  renderTexts();
+  if(typeof renderLeaders === 'function') renderLeaders();
+  saveState();
+  toast('Text saved. The live site is updating.', 'Saved');
+}
 function renderTexts(){
   const leaderOwned = new Set(['pastorVerse','pastorBio1','pastorBio2']);
   Object.keys(STATE.texts).forEach(k=>{
@@ -7022,8 +7336,8 @@ function renderTexts(){
     const el=document.getElementById(k); if(el) el.textContent=STATE.texts[k];
   });
 }
-function loadSettingsIntoEditor(){ const s=STATE.settings; ['churchName','abbrev','bannerVerse','contactEmail','address','phone','domain'].forEach(k=>{const el=document.getElementById('edit-'+k);if(el)el.value=s[k]||'';}); const cb=document.getElementById('setting-require-approval'); if(cb)cb.checked=s.requireApproval; }
-function saveSettings(){ const s=STATE.settings; ['churchName','abbrev','bannerVerse','contactEmail','address','phone','domain'].forEach(k=>{const el=document.getElementById('edit-'+k);if(el)s[k]=el.value.trim();}); const cb=document.getElementById('setting-require-approval'); if(cb)s.requireApproval=cb.checked; renderSettings(); toast('Settings saved.','Saved'); }
+function loadSettingsIntoEditor(){ const s=STATE.settings; ['churchName','abbrev','bannerVerse','contactEmail','address','phone','domain','homeSongTitle','homeSongUrl'].forEach(k=>{const el=document.getElementById('edit-'+k);if(el)el.value=s[k]||'';}); const cb=document.getElementById('setting-require-approval'); if(cb)cb.checked=s.requireApproval; const song=document.getElementById('setting-home-song-autoplay'); if(song)song.checked=s.homeSongAutoplay!==false; const keyStatus=document.getElementById('publish-key-status'); if(keyStatus) keyStatus.textContent = localStorage.getItem('spdc_publish_key') ? 'This browser updates the live site for every visitor.' : 'Paste the live publish key so saves update spdc.church for every visitor. The key stays on this browser and is not shown on the public site.'; }
+function saveSettings(){ const s=STATE.settings; ['churchName','abbrev','bannerVerse','contactEmail','address','phone','domain','homeSongTitle','homeSongUrl'].forEach(k=>{const el=document.getElementById('edit-'+k);if(el)s[k]=el.value.trim();}); const cb=document.getElementById('setting-require-approval'); if(cb)s.requireApproval=cb.checked; const song=document.getElementById('setting-home-song-autoplay'); if(song)s.homeSongAutoplay=song.checked; const keyEl=document.getElementById('edit-publishKey'); if(keyEl && keyEl.value.trim()){ localStorage.setItem('spdc_publish_key', keyEl.value.trim()); keyEl.value=''; } renderSettings(); const saved=saveState(); if(!localStorage.getItem('spdc_publish_key')) toast('Saved on this browser. Paste the live publish key so everyone sees it.', 'Not on the live site yet', true); else if(saved) toast('Settings saved. The live site is updating.', 'Saved'); }
 function renderSettings(){
   const s=STATE.settings;
   document.getElementById('nav-church-name').textContent=s.churchName;
@@ -7035,13 +7349,15 @@ function renderSettings(){
     const fe=document.getElementById('footer-email');
     if(!fe) return;
     const email=(s.contactEmail||'').trim();
-    fe.textContent='✉ Email Us';
+    const showAddress = email && !/^hello@spdc\.church$/i.test(email);
+    fe.textContent = showAddress ? ('✉ ' + email) : '✉ Email Us';
     fe.setAttribute('aria-label','Email us');
     fe.href='#';
     fe.style.display=email?'inline-flex':'none';
   })();
   document.getElementById('footer-domain').textContent=s.domain;
   document.title=s.churchName+' — Miracles · Signs · Wonders';
+  applyHomeSong();
 }
 function openContactEmail(e){
   if(e) e.preventDefault();
@@ -7054,7 +7370,7 @@ function renderSocial(){
   if(tb) tb.innerHTML=Object.keys(STATE.social).filter(k=>STATE.social[k]).map(k=>{ const icons={facebook:'ƒ',instagram:'IG',youtube:'▶',tiktok:'♪'}; return `<a href="${escapeAttr(STATE.social[k])}" target="_blank" rel="noopener" title="${capitalize(k)}">${icons[k]||capitalize(k)[0]}</a>`; }).join('');
   if(grid){ const sources=[{k:'facebook',label:'Facebook',icon:'ƒ',sub:'Follow our daily updates'},{k:'instagram',label:'Instagram',icon:'IG',sub:'Pictures & moments'},{k:'youtube',label:'YouTube',icon:'▶',sub:'Sermons & worship sets'},{k:'tiktok',label:'TikTok',icon:'♪',sub:'Short messages of faith'}]; const cards=sources.filter(s=>STATE.social[s.k]); grid.innerHTML=cards.length?cards.map(s=>`<a class="social-card" href="${escapeAttr(STATE.social[s.k])}" target="_blank" rel="noopener"><div class="si">${s.icon}</div><h4>${s.label}</h4><p>${s.sub}</p></a>`).join(''):`<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--ink-mute);font-style:italic;font-family:'Inter Tight',sans-serif;">Social links will appear here once added in the admin panel.</div>`; }
 }
-function saveSocial(){ Object.keys(STATE.social).forEach(k=>{const el=document.getElementById('social-'+k);if(el)STATE.social[k]=el.value.trim();}); renderSocial(); toast('Social links updated.','Saved'); }
+function saveSocial(){ Object.keys(STATE.social).forEach(k=>{const el=document.getElementById('social-'+k);if(el)STATE.social[k]=el.value.trim();}); renderSocial(); saveState(); toast('Social links updated. The live site is updating.','Saved'); }
 function renderAdminSocialFields(){ const el=document.getElementById('admin-social-fields'); if(!el)return; const labels={facebook:'Facebook URL',instagram:'Instagram URL',youtube:'YouTube URL',tiktok:'TikTok URL'}; el.innerHTML=Object.keys(STATE.social).map(k=>`<label class="field-label">${labels[k]||k}</label><input class="editable-field" id="social-${k}" value="${escapeAttr(STATE.social[k])}" placeholder="https://..." />`).join(''); }
 
 /* ============================================================ PUBLIC RENDERS */
@@ -7965,6 +8281,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
 
   renderAll(); renderThemes(); loadTextsIntoEditor(); loadSettingsIntoEditor();
+  hydrateLiveContent().finally(()=>{ livePublishEnabled = true; });
 
   document.getElementById('mobile-toggle').addEventListener('click',toggleMobile);
   document.getElementById('drawer-overlay').addEventListener('click',toggleMobile);
@@ -8026,6 +8343,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // Logo adjust init
   adjustLogo();
+  initHomeSong();
 });
 
 /* ============================================================
@@ -9089,6 +9407,14 @@ async function handleHeroFlyerUpload(e) {
 }
 
 </script>
+
+<div class="home-song" id="home-song" hidden>
+  <audio id="home-song-audio" preload="auto" loop playsinline></audio>
+  <span class="home-song-title" id="home-song-label">Worship</span>
+  <button type="button" class="home-song-toggle" id="home-song-toggle" onclick="toggleHomeSong()" aria-pressed="false" aria-label="Play song">
+    <span id="home-song-action">Play</span>
+  </button>
+</div>
 
 </body>
 </html>

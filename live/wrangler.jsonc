@@ -1,0 +1,13 @@
+{
+	"name": "spdc-live",
+	"account_id": "5515cfe9233d6a1b7d14b6ed6318f5f4",
+	"main": "worker.js",
+	"compatibility_date": "2026-10-18",
+	"workers_dev": true,
+	"kv_namespaces": [
+		{
+			"binding": "SITE",
+			"id": "af055be398f448e9b5e42b094d57a3b7"
+		}
+	]
+}

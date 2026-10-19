@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-18-mail-raeford-force" />
+<meta name="spdc-build" content="2026-10-18-sync-live-canonical" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -7093,8 +7093,8 @@ function migrateLeaders(){
   let patched = false;
   STATE.leaders.forEach((l, i) => {
     const published = PUBLISHED_LEADER_IMAGES[l.id];
-    const img = String(l.image||'');
-    if(published && (!img || img.startsWith('data:'))){
+    // Always prefer the published leadership photos so every browser matches live
+    if(published && String(l.image||'') !== published){
       l.image = published;
       patched = true;
     }
@@ -7229,41 +7229,37 @@ function migrateGivingMethods(){
       else g.kind = 'link';
     }
     if(typeof g.qrImage === 'undefined') g.qrImage = null;
-    // Keep SPDC Cash App ($SPDCENTER) linked with published QR
+    // Keep SPDC Cash App ($SPDCENTER) linked with published QR — match live for every visitor
     if(String(g.kind||'').toLowerCase()==='cashapp' || String(g.id||'')==='give-cashapp' || String(g.label||'').toLowerCase().includes('cash')){
       const u = String(g.url||'').trim();
-      if(!u || !u.toLowerCase().includes('spdcenter')){
+      if(u !== CASHAPP_URL){
         g.url = CASHAPP_URL;
         patched = true;
       }
-      if(!String(g.detail||'').trim() || String(g.detail).includes('Set your $Cashtag') || String(g.detail).includes('Set your $cashtag')){
+      if(String(g.detail||'').trim() !== 'St Pauls Deliverance Center'){
         g.detail = 'St Pauls Deliverance Center';
         patched = true;
       }
-      if(!String(g.qrImage||'').trim()){
+      if(String(g.qrImage||'') !== CASHAPP_QR){
         g.qrImage = CASHAPP_QR;
         patched = true;
       }
     }
-    // Keep SPDC Givelify donate page linked (replace blank / homepage placeholders)
+    // Keep SPDC Givelify donate page linked — match live for every visitor
     if(String(g.kind||'').toLowerCase()==='givelify' || String(g.id||'')==='give-givelify' || String(g.label||'').toLowerCase().includes('givelify')){
       const u = String(g.url||'').trim();
-      if(!u || u === 'https://www.givelify.com/' || u === 'https://www.givelify.com' || !u.includes('/donate/')){
+      if(u !== GIVELIFY_URL){
         g.url = GIVELIFY_URL;
         patched = true;
       }
-      if(!String(g.detail||'').trim() || String(g.detail).includes('Set your Givelify')){
+      if(String(g.detail||'').trim() !== 'Give online to St Pauls Deliverance Center'){
         g.detail = 'Give online to St Pauls Deliverance Center';
         patched = true;
       }
     }
-    // Mail gifts go to the gift mailing address (not the church street address)
+    // Mail gifts always use the Raeford gift mailing address (never the church street address)
     if(String(g.kind||'').toLowerCase()==='mail' || String(g.id||'')==='give-mail' || String(g.label||'').toLowerCase().includes('mail')){
-      const d = String(g.detail||'').trim();
-      const churchAddr = String((STATE.settings && STATE.settings.address) || '').trim();
-      const looksLikeChurch = d && churchAddr && d.replace(/\s+/g,' ').toLowerCase() === churchAddr.replace(/\s+/g,' ').toLowerCase();
-      const looksLikeOldStPauls = /w\s*broad\s*st/i.test(d) && /st\.?\s*pauls/i.test(d);
-      if(!d || looksLikeChurch || looksLikeOldStPauls || !/lindsay/i.test(d)){
+      if(String(g.detail||'').replace(/\s+/g,' ').trim() !== MAIL_GIFT_ADDRESS.replace(/\s+/g,' ').trim()){
         g.detail = MAIL_GIFT_ADDRESS;
         patched = true;
       }
@@ -7344,7 +7340,7 @@ function renderGivingMethods(){
       mailBox.innerHTML = '';
     } else {
       const m = mail[0];
-      const detail = (m.detail||'').trim() || mailGiftAddress;
+      const detail = mailGiftAddress;
       const church = (STATE.settings && STATE.settings.churchName) ? STATE.settings.churchName : 'St. Pauls Deliverance Center';
       const envelopeSvg = `<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M6 14h36v22H6V14z" stroke="currentColor" stroke-width="2.5" fill="none"/><path d="M6 16l18 12L42 16" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="none"/></svg>`;
       mailBox.style.display = '';
@@ -7357,7 +7353,7 @@ function renderGivingMethods(){
           </div>
         </div>
         <div class="mail-body">
-          <p class="mail-intro">Prefer to give by mail? Send checks, money orders, or a donation letter to the church office at this address:</p>
+          <p class="mail-intro">Prefer to give by mail? Send checks, money orders, or a donation letter to this gift mailing address:</p>
           <div class="mail-envelope">
             <p class="mail-to-label">Mail to</p>
             <p class="mail-address">${escapeHtml(church)}\n${escapeHtml(detail)}</p>

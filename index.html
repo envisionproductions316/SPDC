@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-18-quiet-song" />
+<meta name="spdc-build" content="2026-10-19-audio-only" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -4552,26 +4552,36 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   .hero-flyer-slot { max-width: 340px; width: min(100%, 340px); margin: 0 auto 30px; }
 }
 
-/* Home page song — sits at the top so pause is always easy to find */
+/* Home page song — audio only, controls sit in the existing top bar */
 .home-song {
-  position: sticky;
-  top: 0;
-  z-index: 46;
-  overflow: hidden;
+  position: relative;
+  z-index: 2;
   display: none;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  padding: 3px 16px;
-  background: #0c2148;
-  color: rgba(255, 248, 225, 0.7);
-  border-bottom: 1px solid rgba(244, 197, 66, 0.18);
+  padding: 0;
+  background: transparent;
+  color: rgba(255, 248, 225, 0.85);
+  border: 0;
   box-shadow: none;
   font-family: 'Inter Tight', sans-serif;
 }
 .home-song.is-on-home { display: flex; }
-.home-song.is-on-home ~ nav.main { top: 30px; }
 .home-song[hidden] { display: none !important; }
+.home-song-player {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 36px;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+.home-song:not(.is-on-home) .home-song-player,
+.home-song[hidden] .home-song-player { display: none !important; }
 .home-song-meta { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .home-song-copy { min-width: 0; }
 .home-song-kicker { display: none; }
@@ -4615,29 +4625,19 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
 }
 .home-song-toggle:hover { filter: brightness(1.06); }
 .home-song-meta, .home-song-toggle { position: relative; z-index: 2; }
-.home-song::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: #0c2148;
-  pointer-events: none;
-}
 #home-song-yt, .home-song iframe {
   position: absolute !important;
   top: 0;
   left: 0;
-  width: 100% !important;
-  height: 180px !important;
-  z-index: 0;
-  opacity: 1;
+  width: 220px !important;
+  height: 36px !important;
+  opacity: 0 !important;
   pointer-events: none;
   border: 0;
 }
 @media (max-width: 920px) {
-  .home-song { padding: 3px 12px; gap: 8px; }
-  .home-song-title { font-size: 11px; max-width: 42vw; }
-  .home-song.is-on-home ~ nav.main { top: 28px; }
+  .home-song { gap: 8px; }
+  .home-song-title { font-size: 11px; max-width: 34vw; }
 }
 
 </style>
@@ -4651,24 +4651,23 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
     <span class="verse-sep">·</span>
     <span class="verse" id="topbar-verse">"Behold, I will do a new thing." — Isaiah 43:19</span>
   </div>
-  <div style="display:flex; align-items:center;">
+  <div style="display:flex; align-items:center; gap:12px;">
+    <div class="home-song" id="home-song" hidden>
+      <div class="home-song-player" aria-hidden="true"><div id="home-song-yt"></div></div>
+      <audio id="home-song-audio" preload="auto" loop playsinline></audio>
+      <div class="home-song-meta">
+        <div class="home-song-eq" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="home-song-copy">
+          <div class="home-song-kicker">Now playing</div>
+          <div class="home-song-title" id="home-song-label">The Maranatha Song</div>
+        </div>
+      </div>
+      <button type="button" class="home-song-toggle" id="home-song-toggle" onclick="toggleHomeSong()" aria-pressed="false" aria-label="Pause or play the song">
+        <span id="home-song-action">Play</span>
+      </button>
+    </div>
     <div class="social" id="topbar-social"></div>
   </div>
-</div>
-
-<div class="home-song" id="home-song" hidden>
-  <div id="home-song-yt"></div>
-  <audio id="home-song-audio" preload="auto" loop playsinline></audio>
-  <div class="home-song-meta">
-    <div class="home-song-eq" aria-hidden="true"><span></span><span></span><span></span></div>
-    <div class="home-song-copy">
-      <div class="home-song-kicker">Now playing</div>
-      <div class="home-song-title" id="home-song-label">The Maranatha Song</div>
-    </div>
-  </div>
-  <button type="button" class="home-song-toggle" id="home-song-toggle" onclick="toggleHomeSong()" aria-pressed="false" aria-label="Pause or play the song">
-    <span id="home-song-action">Play music</span>
-  </button>
 </div>
 
 <!-- ========== MAIN NAV ========== -->
@@ -6629,16 +6628,16 @@ function ensureYouTubeAPI(){
   return window.__spdcYtPromise;
 }
 function resetYouTubeHost(){
-  const wrap = document.getElementById('home-song');
+  const player = document.querySelector('.home-song-player');
   let host = document.getElementById('home-song-yt');
   if (host && host.tagName !== 'DIV') {
     host.remove();
     host = null;
   }
-  if (!host && wrap) {
+  if (!host && player) {
     host = document.createElement('div');
     host.id = 'home-song-yt';
-    wrap.insertBefore(host, wrap.firstChild);
+    player.appendChild(host);
   }
   return host;
 }

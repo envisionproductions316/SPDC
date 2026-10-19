@@ -4552,61 +4552,84 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   .hero-flyer-slot { max-width: 340px; width: min(100%, 340px); margin: 0 auto 30px; }
 }
 
-/* Home page song — fixed to the viewport so the page animation does not trap it */
+/* Home page song — sits at the top so pause is always easy to find */
 .home-song {
-  position: fixed;
-  right: 22px;
-  bottom: 22px;
-  z-index: 36;
+  position: sticky;
+  top: 0;
+  z-index: 45;
   display: none;
   align-items: center;
-  gap: 12px;
-  max-width: calc(100vw - 32px);
-  padding: 8px 8px 8px 16px;
-  background: var(--grad-royal);
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 28px;
+  background: linear-gradient(90deg, #071833 0%, #0d2a6b 42%, #1741a8 100%);
   color: var(--text-on-dark);
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
-  box-shadow: var(--shadow-deep);
+  border-bottom: 2px solid var(--accent);
+  box-shadow: 0 10px 28px -16px rgba(7, 24, 51, 0.8);
   font-family: 'Inter Tight', sans-serif;
 }
 .home-song.is-on-home { display: flex; }
+.home-song.is-on-home ~ nav.main { top: 58px; }
 .home-song[hidden] { display: none !important; }
+.home-song-meta { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.home-song-copy { min-width: 0; }
+.home-song-kicker {
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+}
 .home-song-title {
   font-family: 'Cinzel', serif;
-  font-size: 13px;
-  letter-spacing: .04em;
-  max-width: 180px;
+  font-size: 16px;
+  letter-spacing: .03em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.home-song-eq { display: flex; align-items: flex-end; gap: 3px; height: 16px; flex-shrink: 0; }
+.home-song-eq span {
+  display: block;
+  width: 3px;
+  height: 5px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.home-song.is-playing .home-song-eq span { animation: songEq .9s ease-in-out infinite; }
+.home-song-eq span:nth-child(2) { animation-delay: .15s; }
+.home-song-eq span:nth-child(3) { animation-delay: .3s; }
+@keyframes songEq {
+  0%, 100% { height: 5px; }
+  50% { height: 16px; }
 }
 .home-song-toggle {
   border: none;
   background: var(--grad-gold);
   color: var(--primary-dark);
   border-radius: 999px;
-  padding: 8px 16px;
+  padding: 10px 18px;
   font-weight: 700;
   font-family: 'Inter Tight', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
-  letter-spacing: .06em;
+  letter-spacing: .04em;
+  flex-shrink: 0;
 }
-.home-song-toggle:hover { filter: brightness(1.05); }
+.home-song-toggle:hover { filter: brightness(1.06); }
 #home-song-yt, .home-song iframe {
-  position: absolute;
-  width: 200px;
-  height: 113px;
-  right: 0;
-  bottom: calc(100% + 8px);
-  opacity: 0.02;
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  left: -9999px;
+  top: 0;
+  opacity: 0;
   pointer-events: none;
   border: 0;
 }
 @media (max-width: 920px) {
-  .home-song { left: 12px; right: 12px; bottom: 12px; justify-content: space-between; }
-  .home-song-title { max-width: none; flex: 1; }
+  .home-song { padding: 10px 16px; gap: 10px; }
+  .home-song-title { font-size: 14px; max-width: 46vw; }
 }
 
 </style>
@@ -4624,6 +4647,21 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
     <div class="social" id="topbar-social"></div>
     <div class="topbar-auth" id="topbar-auth"></div>
   </div>
+</div>
+
+<div class="home-song" id="home-song" hidden>
+  <div id="home-song-yt"></div>
+  <audio id="home-song-audio" preload="auto" loop playsinline></audio>
+  <div class="home-song-meta">
+    <div class="home-song-eq" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="home-song-copy">
+      <div class="home-song-kicker">Now playing</div>
+      <div class="home-song-title" id="home-song-label">The Maranatha Song</div>
+    </div>
+  </div>
+  <button type="button" class="home-song-toggle" id="home-song-toggle" onclick="toggleHomeSong()" aria-pressed="false" aria-label="Pause or play the song">
+    <span id="home-song-action">Play music</span>
+  </button>
 </div>
 
 <!-- ========== MAIN NAV ========== -->
@@ -6590,14 +6628,18 @@ function updateHomeSongButton(){
     btn.setAttribute('aria-pressed', 'false');
     btn.setAttribute('aria-label', 'Song file is missing');
     btn.classList.remove('is-playing');
+    const wrap = document.getElementById('home-song');
+    if (wrap) wrap.classList.remove('is-playing');
     if (action) action.textContent = 'Add file';
     return;
   }
   const playing = homeSongIsPlaying();
+  const wrap = document.getElementById('home-song');
+  if (wrap) wrap.classList.toggle('is-playing', playing);
   btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
-  btn.setAttribute('aria-label', playing ? 'Pause song' : 'Play song');
+  btn.setAttribute('aria-label', playing ? 'Pause music' : 'Play music');
   btn.classList.toggle('is-playing', playing);
-  if (action) action.textContent = playing ? 'Pause' : 'Play';
+  if (action) action.textContent = playing ? 'Pause music' : 'Play music';
 }
 function mountYouTubeSong(id){
   if (!resetYouTubeHost()) return;
@@ -9528,15 +9570,6 @@ async function handleHeroFlyerUpload(e) {
 }
 
 </script>
-
-<div class="home-song" id="home-song" hidden>
-  <div id="home-song-yt"></div>
-  <audio id="home-song-audio" preload="auto" loop playsinline></audio>
-  <span class="home-song-title" id="home-song-label">The Maranatha Song</span>
-  <button type="button" class="home-song-toggle" id="home-song-toggle" onclick="toggleHomeSong()" aria-pressed="false" aria-label="Play song">
-    <span id="home-song-action">Play</span>
-  </button>
-</div>
 
 </body>
 </html>

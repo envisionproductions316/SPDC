@@ -4594,6 +4594,16 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   letter-spacing: .06em;
 }
 .home-song-toggle:hover { filter: brightness(1.05); }
+#home-song-yt, .home-song iframe {
+  position: absolute;
+  width: 200px;
+  height: 113px;
+  right: 0;
+  bottom: calc(100% + 8px);
+  opacity: 0.02;
+  pointer-events: none;
+  border: 0;
+}
 @media (max-width: 920px) {
   .home-song { left: 12px; right: 12px; bottom: 12px; justify-content: space-between; }
   .home-song-title { max-width: none; flex: 1; }
@@ -5773,7 +5783,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
           <input class="editable-field" id="edit-homeSongTitle" placeholder="Worship" />
           <label class="field-label">Song file or direct audio link</label>
           <input class="editable-field" id="edit-homeSongUrl" placeholder="assets/audio/home-song.mp3" />
-          <p style="font-size:12px;color:var(--ink-mute);margin:6px 0 14px;font-family:'Inter Tight',sans-serif;">Place an mp3, m4a, or wav at assets/audio/home-song.mp3, or paste a direct link to the audio file. The song starts on the home page. Visitors can pause it. Playback pauses when they leave Home and resumes when they come back, unless they paused it themselves.</p>
+          <p style="font-size:12px;color:var(--ink-mute);margin:6px 0 14px;font-family:'Inter Tight',sans-serif;">Paste a YouTube link, or a direct mp3, m4a, or wav link. The song starts on the home page. Visitors can pause it. Playback pauses when they leave Home and resumes when they come back, unless they paused it themselves.</p>
           <label style="display:flex;align-items:center;gap:10px;font-family:'Inter Tight',sans-serif;font-size:14px;color:var(--ink);cursor:pointer;margin-bottom:14px;">
             <input type="checkbox" id="setting-home-song-autoplay" checked style="width:18px;height:18px;" />
             Play automatically on the home page
@@ -6038,8 +6048,8 @@ const DEFAULT_STATE = {
     phone:"",
     domain:"spdc.church",
     requireApproval:true,
-    homeSongTitle:"Worship",
-    homeSongUrl:"assets/audio/home-song.mp3",
+    homeSongTitle:"The Maranatha Song",
+    homeSongUrl:"https://www.youtube.com/watch?v=-BjYTSgIIsY",
     homeSongAutoplay:true
   },
   social:{ facebook:"", instagram:"", youtube:"", tiktok:"" },
@@ -6514,42 +6524,154 @@ function goPage(page){
 /* ============================================================ HOME SONG */
 let homeSongWantsPlay = true;
 let homeSongReady = false;
+let homeYtPlayer = null;
+let homeYtReady = false;
+let homeYtId = '';
 
 function homeSongAudio(){ return document.getElementById('home-song-audio'); }
 function homeSongConfig(){
   const s = (STATE && STATE.settings) || {};
   return {
-    title: (s.homeSongTitle || 'Worship').trim() || 'Worship',
+    title: (s.homeSongTitle || 'The Maranatha Song').trim() || 'The Maranatha Song',
     url: (s.homeSongUrl || '').trim(),
     autoplay: s.homeSongAutoplay !== false
   };
 }
-function updateHomeSongButton(){
+function youtubeVideoId(url){
+  const m = String(url || '').match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : '';
+}
+function ensureYouTubeAPI(){
+  if (window.YT && window.YT.Player) return Promise.resolve();
+  if (window.__spdcYtPromise) return window.__spdcYtPromise;
+  window.__spdcYtPromise = new Promise((resolve) => {
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function(){
+      if (typeof prev === 'function') prev();
+      resolve();
+    };
+    const s = document.createElement('script');
+    s.src = 'https://www.youtube.com/iframe_api';
+    s.async = true;
+    document.head.appendChild(s);
+  });
+  return window.__spdcYtPromise;
+}
+function resetYouTubeHost(){
+  const wrap = document.getElementById('home-song');
+  let host = document.getElementById('home-song-yt');
+  if (host && host.tagName !== 'DIV') {
+    host.remove();
+    host = null;
+  }
+  if (!host && wrap) {
+    host = document.createElement('div');
+    host.id = 'home-song-yt';
+    wrap.insertBefore(host, wrap.firstChild);
+  }
+  return host;
+}
+function homeSongIsPlaying(){
+  const id = youtubeVideoId(homeSongConfig().url);
+  if (id) {
+    if (!homeYtPlayer || !homeYtReady || !window.YT) return false;
+    const st = homeYtPlayer.getPlayerState();
+    return st === YT.PlayerState.PLAYING || st === YT.PlayerState.BUFFERING;
+  }
   const audio = homeSongAudio();
+  return !!(audio && audio.src && !audio.paused && !audio.ended);
+}
+function updateHomeSongButton(){
   const btn = document.getElementById('home-song-toggle');
   const action = document.getElementById('home-song-action');
-  if (!audio || !btn) return;
-  if (audio.dataset.broken === '1') {
+  const audio = homeSongAudio();
+  if (!btn) return;
+  if (audio && audio.dataset.broken === '1' && !youtubeVideoId(homeSongConfig().url)) {
     btn.setAttribute('aria-pressed', 'false');
     btn.setAttribute('aria-label', 'Song file is missing');
     btn.classList.remove('is-playing');
     if (action) action.textContent = 'Add file';
     return;
   }
-  const playing = !audio.paused && !audio.ended;
+  const playing = homeSongIsPlaying();
   btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
   btn.setAttribute('aria-label', playing ? 'Pause song' : 'Play song');
   btn.classList.toggle('is-playing', playing);
   if (action) action.textContent = playing ? 'Pause' : 'Play';
+}
+function mountYouTubeSong(id){
+  if (!resetYouTubeHost()) return;
+  ensureYouTubeAPI().then(() => {
+    if (!document.getElementById('home-song-yt')) resetYouTubeHost();
+    if (homeYtPlayer && homeYtId === id && homeYtReady) {
+      syncHomeSongForPage(document.getElementById('page-home') && document.getElementById('page-home').classList.contains('active') ? 'home' : '');
+      return;
+    }
+    if (homeYtPlayer && homeYtPlayer.destroy) {
+      try { homeYtPlayer.destroy(); } catch (_) {}
+      homeYtPlayer = null;
+      homeYtReady = false;
+      resetYouTubeHost();
+    }
+    homeYtId = id;
+    const origin = (location.protocol === 'http:' || location.protocol === 'https:') ? location.origin : undefined;
+    homeYtPlayer = new YT.Player('home-song-yt', {
+      videoId: id,
+      width: '200',
+      height: '113',
+      playerVars: {
+        autoplay: homeSongWantsPlay ? 1 : 0,
+        controls: 0,
+        disablekb: 1,
+        fs: 0,
+        modestbranding: 1,
+        rel: 0,
+        playsinline: 1,
+        loop: 1,
+        playlist: id,
+        origin: origin
+      },
+      events: {
+        onReady: (e) => {
+          homeYtReady = true;
+          try { e.target.setVolume(70); } catch (_) {}
+          const home = document.getElementById('page-home');
+          if (homeSongWantsPlay && home && home.classList.contains('active')) e.target.playVideo();
+          updateHomeSongButton();
+        },
+        onStateChange: () => updateHomeSongButton(),
+        onError: () => updateHomeSongButton()
+      }
+    });
+  }).catch(() => updateHomeSongButton());
+}
+function playHomeSong(){
+  const id = youtubeVideoId(homeSongConfig().url);
+  if (id) {
+    if (homeYtPlayer && homeYtReady) homeYtPlayer.playVideo();
+    else if (!homeYtPlayer) mountYouTubeSong(id);
+    updateHomeSongButton();
+    return;
+  }
+  const audio = homeSongAudio();
+  if (!audio || !audio.src || audio.dataset.broken === '1') return;
+  audio.play().then(updateHomeSongButton).catch(() => updateHomeSongButton());
+}
+function pauseHomeSong(){
+  if (homeYtPlayer && homeYtReady) {
+    try { homeYtPlayer.pauseVideo(); } catch (_) {}
+  }
+  const audio = homeSongAudio();
+  if (audio) audio.pause();
+  updateHomeSongButton();
 }
 function onHomeSongUnlock(e){
   if (e.target && e.target.closest && e.target.closest('#home-song')) return;
   if (!homeSongWantsPlay) return;
   const home = document.getElementById('page-home');
   if (!home || !home.classList.contains('active')) return;
-  const audio = homeSongAudio();
-  if (!audio || audio.dataset.broken === '1' || !audio.src || !audio.paused) return;
-  audio.play().then(updateHomeSongButton).catch(() => {});
+  if (homeSongIsPlaying()) return;
+  playHomeSong();
 }
 function applyHomeSong(){
   const audio = homeSongAudio();
@@ -6558,31 +6680,43 @@ function applyHomeSong(){
   if (!audio || !wrap) return;
   const cfg = homeSongConfig();
   if (label) label.textContent = cfg.title;
+  const yt = youtubeVideoId(cfg.url);
   if (!cfg.url) {
     wrap.hidden = true;
     audio.removeAttribute('src');
     audio.dataset.src = '';
-    audio.dataset.broken = '0';
     audio.pause();
+    pauseHomeSong();
     return;
   }
   wrap.hidden = false;
-  let next = cfg.url;
-  try { next = new URL(cfg.url, window.location.href).href; } catch (_) {}
+  const sourceKey = yt ? ('yt:' + yt) : cfg.url;
   const autoFlag = cfg.autoplay ? '1' : '0';
-  if (audio.dataset.autoplay !== autoFlag) {
-    audio.dataset.autoplay = autoFlag;
+  if (wrap.dataset.songKey !== sourceKey || wrap.dataset.autoplay !== autoFlag) {
+    wrap.dataset.songKey = sourceKey;
+    wrap.dataset.autoplay = autoFlag;
     homeSongWantsPlay = cfg.autoplay;
-    if (!cfg.autoplay) audio.pause();
   }
-  if (audio.dataset.src !== next) {
-    audio.dataset.src = next;
+  if (yt) {
+    audio.pause();
+    audio.removeAttribute('src');
     audio.dataset.broken = '0';
-    homeSongWantsPlay = cfg.autoplay;
-    audio.src = cfg.url;
-    audio.loop = true;
-    audio.volume = 0.7;
-    audio.load();
+    audio.dataset.src = '';
+    mountYouTubeSong(yt);
+  } else if (homeYtPlayer && homeYtPlayer.pauseVideo) {
+    try { homeYtPlayer.pauseVideo(); } catch (_) {}
+  }
+  if (!yt) {
+    let next = cfg.url;
+    try { next = new URL(cfg.url, window.location.href).href; } catch (_) {}
+    if (audio.dataset.src !== next) {
+      audio.dataset.src = next;
+      audio.dataset.broken = '0';
+      audio.src = cfg.url;
+      audio.loop = true;
+      audio.volume = 0.7;
+      audio.load();
+    }
   }
   const active = document.querySelector('.page.active');
   const page = active && active.id ? active.id.replace(/^page-/, '') : 'home';
@@ -6590,37 +6724,30 @@ function applyHomeSong(){
 }
 function syncHomeSongForPage(page){
   const wrap = document.getElementById('home-song');
-  const audio = homeSongAudio();
   if (wrap) wrap.classList.toggle('is-on-home', page === 'home' && !wrap.hidden);
-  if (!audio) return;
   if (page === 'home') {
-    if (homeSongWantsPlay && audio.dataset.broken !== '1' && audio.src) {
-      audio.play().then(updateHomeSongButton).catch(() => updateHomeSongButton());
-    } else {
-      updateHomeSongButton();
-    }
+    if (homeSongWantsPlay) playHomeSong();
+    else updateHomeSongButton();
   } else {
-    audio.pause();
-    updateHomeSongButton();
+    const keep = homeSongWantsPlay;
+    pauseHomeSong();
+    homeSongWantsPlay = keep;
   }
 }
 function toggleHomeSong(){
+  const cfg = homeSongConfig();
   const audio = homeSongAudio();
-  if (!audio) return;
-  if (audio.dataset.broken === '1' || !audio.getAttribute('src')) {
-    toast('Add the song at assets/audio/home-song.mp3, or paste a direct audio link in Admin → Settings.', 'Song Not Added', true);
+  const yt = youtubeVideoId(cfg.url);
+  if (!yt && audio && (audio.dataset.broken === '1' || !audio.getAttribute('src'))) {
+    toast('Paste a YouTube link, or a direct audio link, in Admin → Settings.', 'Song Not Added', true);
     return;
   }
-  if (audio.paused) {
-    homeSongWantsPlay = true;
-    audio.play().then(updateHomeSongButton).catch(() => {
-      toast('This browser blocked automatic playback. Press Play once more.', 'Press Play', true);
-      updateHomeSongButton();
-    });
-  } else {
+  if (homeSongIsPlaying()) {
     homeSongWantsPlay = false;
-    audio.pause();
-    updateHomeSongButton();
+    pauseHomeSong();
+  } else {
+    homeSongWantsPlay = true;
+    playHomeSong();
   }
 }
 function initHomeSong(){
@@ -6634,6 +6761,7 @@ function initHomeSong(){
   audio.addEventListener('play', updateHomeSongButton);
   audio.addEventListener('pause', updateHomeSongButton);
   audio.addEventListener('error', () => {
+    if (youtubeVideoId(homeSongConfig().url)) return;
     audio.dataset.broken = '1';
     const wrap = document.getElementById('home-song');
     const admin = STATE.currentUser && STATE.currentUser.role === 'admin';
@@ -6646,19 +6774,12 @@ function initHomeSong(){
     if (wrap && homeSongConfig().url) wrap.hidden = false;
     updateHomeSongButton();
     const home = document.getElementById('page-home');
-    if (homeSongWantsPlay && home && home.classList.contains('active')) {
+    if (homeSongWantsPlay && home && home.classList.contains('active') && !youtubeVideoId(homeSongConfig().url)) {
       audio.play().then(updateHomeSongButton).catch(() => {});
     }
   });
   document.addEventListener('pointerdown', onHomeSongUnlock);
   applyHomeSong();
-  if (audio.error) {
-    audio.dataset.broken = '1';
-    const wrap = document.getElementById('home-song');
-    const admin = STATE.currentUser && STATE.currentUser.role === 'admin';
-    if (wrap) wrap.hidden = !admin;
-    updateHomeSongButton();
-  }
 }
 function closeMobile(){
   document.getElementById('navLinks').classList.remove('open');
@@ -9409,8 +9530,9 @@ async function handleHeroFlyerUpload(e) {
 </script>
 
 <div class="home-song" id="home-song" hidden>
+  <div id="home-song-yt"></div>
   <audio id="home-song-audio" preload="auto" loop playsinline></audio>
-  <span class="home-song-title" id="home-song-label">Worship</span>
+  <span class="home-song-title" id="home-song-label">The Maranatha Song</span>
   <button type="button" class="home-song-toggle" id="home-song-toggle" onclick="toggleHomeSong()" aria-pressed="false" aria-label="Play song">
     <span id="home-song-action">Play</span>
   </button>

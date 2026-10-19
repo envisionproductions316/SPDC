@@ -13,8 +13,8 @@
     "phone": "",
     "domain": "spdc.church",
     "requireApproval": true,
-    "homeSongTitle": "Worship",
-    "homeSongUrl": "assets/audio/home-song.mp3",
+    "homeSongTitle": "The Maranatha Song",
+    "homeSongUrl": "https://www.youtube.com/watch?v=-BjYTSgIIsY",
     "homeSongAutoplay": true
   },
   "texts": {

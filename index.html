@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-18-leadership-photos" />
+<meta name="spdc-build" content="2026-10-18-mail-gift-address" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -6035,7 +6035,7 @@ const DEFAULT_STATE = {
   givingMethods:[
     { id:'give-cashapp', kind:'cashapp', label:'Cash App', icon:'💵', detail:'St Pauls Deliverance Center', url:'https://cash.app/$SPDCENTER', qrImage:'assets/giving/cashapp-qr.svg' },
     { id:'give-givelify', kind:'givelify', label:'Givelify', icon:'🙏', detail:'Give online to St Pauls Deliverance Center', url:'https://www.givelify.com/donate/MTg4NTc3Nw==/selection', qrImage:null },
-    { id:'give-mail', kind:'mail', label:'Mail a Gift', icon:'✉️', detail:'', url:'', qrImage:null }
+    { id:'give-mail', kind:'mail', label:'Mail a Gift', icon:'✉️', detail:'2950 Lindsay Rd. Suite #54\nRaeford, NC 28376', url:'', qrImage:null }
   ],
   emailCampaigns:[],
   members:[
@@ -7203,10 +7203,11 @@ function migrateGivingMethods(){
   const GIVELIFY_URL = 'https://www.givelify.com/donate/MTg4NTc3Nw==/selection';
   const CASHAPP_URL = 'https://cash.app/$SPDCENTER';
   const CASHAPP_QR = 'assets/giving/cashapp-qr.svg';
+  const MAIL_GIFT_ADDRESS = '2950 Lindsay Rd. Suite #54\nRaeford, NC 28376';
   const defaults = [
     { id:'give-cashapp', kind:'cashapp', label:'Cash App', icon:'💵', detail:'St Pauls Deliverance Center', url:CASHAPP_URL, qrImage:CASHAPP_QR },
     { id:'give-givelify', kind:'givelify', label:'Givelify', icon:'🙏', detail:'Give online to St Pauls Deliverance Center', url:GIVELIFY_URL, qrImage:null },
-    { id:'give-mail', kind:'mail', label:'Mail a Gift', icon:'✉️', detail:'', url:'', qrImage:null }
+    { id:'give-mail', kind:'mail', label:'Mail a Gift', icon:'✉️', detail:MAIL_GIFT_ADDRESS, url:'', qrImage:null }
   ];
   if(!STATE.givingMethods.length){
     STATE.givingMethods = defaults.map(d => Object.assign({}, d));
@@ -7256,6 +7257,17 @@ function migrateGivingMethods(){
         patched = true;
       }
     }
+    // Mail gifts go to the gift mailing address (not the church street address)
+    if(String(g.kind||'').toLowerCase()==='mail' || String(g.id||'')==='give-mail' || String(g.label||'').toLowerCase().includes('mail')){
+      const d = String(g.detail||'').trim();
+      const churchAddr = String((STATE.settings && STATE.settings.address) || '').trim();
+      const looksLikeChurch = d && churchAddr && d.replace(/\s+/g,' ').toLowerCase() === churchAddr.replace(/\s+/g,' ').toLowerCase();
+      const looksLikeOldStPauls = /w\s*broad\s*st/i.test(d) && /st\.?\s*pauls/i.test(d);
+      if(!d || looksLikeChurch || looksLikeOldStPauls || !/lindsay/i.test(d)){
+        g.detail = MAIL_GIFT_ADDRESS;
+        patched = true;
+      }
+    }
   });
   if(patched){ try { saveState(); } catch(_){} }
 }
@@ -7273,7 +7285,7 @@ function renderGivingMethods(){
   const methods = getGivingMethods();
   const online = methods.filter(g => String(g.kind||'') !== 'mail');
   const mail = methods.filter(g => String(g.kind||'') === 'mail');
-  const address = (STATE.settings && STATE.settings.address) ? STATE.settings.address : '1291 W Broad St, St Pauls, NC 28384';
+  const mailGiftAddress = '2950 Lindsay Rd. Suite #54\nRaeford, NC 28376';
 
   if(!online.length && !mail.length){
     el.innerHTML = '<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text-on-dark-soft);font-style:italic;">Add Cash App, Givelify, or mail details in Admin → Giving Methods.</div>';
@@ -7332,7 +7344,7 @@ function renderGivingMethods(){
       mailBox.innerHTML = '';
     } else {
       const m = mail[0];
-      const detail = (m.detail||'').trim() || address;
+      const detail = (m.detail||'').trim() || mailGiftAddress;
       const church = (STATE.settings && STATE.settings.churchName) ? STATE.settings.churchName : 'St. Pauls Deliverance Center';
       const envelopeSvg = `<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M6 14h36v22H6V14z" stroke="currentColor" stroke-width="2.5" fill="none"/><path d="M6 16l18 12L42 16" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="none"/></svg>`;
       mailBox.style.display = '';
@@ -7649,12 +7661,12 @@ let editingType=null,editingId=null,eventModalImage=null;
 
 function givingModalFieldsHtml(item, kindOverride){
   const church = (STATE.settings && STATE.settings.churchName) || 'St. Pauls Deliverance Center';
-  const settingsAddress = (STATE.settings && STATE.settings.address) || '';
+  const mailGiftAddress = '2950 Lindsay Rd. Suite #54\nRaeford, NC 28376';
   const kind = String(kindOverride || (item && item.kind) || 'link').toLowerCase().trim() || 'link';
   const label = item ? (item.label || '') : (kind==='mail' ? 'Mail a Gift' : kind==='cashapp' ? 'Cash App' : kind==='givelify' ? 'Givelify' : '');
   const icon = item ? (item.icon || '') : (kind==='mail' ? '✉️' : kind==='cashapp' ? '💵' : kind==='givelify' ? '🙏' : '✦');
   let detail = item ? (item.detail || '') : '';
-  if(kind==='mail' && !String(detail).trim()) detail = settingsAddress;
+  if(kind==='mail' && !String(detail).trim()) detail = mailGiftAddress;
   const url = item ? (item.url || '') : '';
   const kindOpts = [
     {v:'cashapp', t:'Cash App'},
@@ -7673,9 +7685,9 @@ function givingModalFieldsHtml(item, kindOverride){
       <input class="editable-field" type="text" data-key="label" value="${escapeAttr(label)}" />
       <label class="field-label">Type</label>
       <select class="editable-field" data-key="kind" onchange="onGivingKindChange(this.value)">${kindOpts}</select>
-      <label class="field-label">Mailing Address</label>
+      <label class="field-label">Mailing Address (for checks / gifts)</label>
       <textarea class="editable-field" data-key="detail" rows="3" placeholder="Street, City, State ZIP">${escapeHtml(detail)}</textarea>
-      <p style="font-size:12px;color:var(--ink-mute);margin:-6px 0 12px;font-family:'Inter Tight',sans-serif;">Leave blank to use the church address from Settings. Example: ${escapeHtml(settingsAddress||'1291 W Broad St, St Pauls, NC 28384')}</p>
+      <p style="font-size:12px;color:var(--ink-mute);margin:-6px 0 12px;font-family:'Inter Tight',sans-serif;">Gift mailing address (separate from the church street address). Default: ${escapeHtml(mailGiftAddress.replace(/\n/g, ', '))}</p>
       <label class="field-label">Icon emoji</label>
       <input class="editable-field" type="text" data-key="icon" value="${escapeAttr(icon||'✉️')}" />
       <input type="hidden" data-key="url" value="" />
@@ -7712,7 +7724,7 @@ function onGivingKindChange(kind){
   document.querySelectorAll('#modal-fields [data-key]').forEach(input=>{ draft[input.dataset.key]=input.value; });
   draft.kind = kind;
   if(kind==='mail' && !String(draft.detail||'').trim()){
-    draft.detail = (STATE.settings && STATE.settings.address) || '';
+    draft.detail = '2950 Lindsay Rd. Suite #54\nRaeford, NC 28376';
   }
   if(kind==='mail' && !String(draft.label||'').trim()) draft.label = 'Mail a Gift';
   if(kind==='mail' && !String(draft.icon||'').trim()) draft.icon = '✉️';

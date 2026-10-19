@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-19-audio-only" />
+<meta name="spdc-build" content="2026-10-19-song-persists" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -4580,7 +4580,6 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
   pointer-events: none;
   transform: translateZ(0);
 }
-.home-song:not(.is-on-home) .home-song-player,
 .home-song[hidden] .home-song-player { display: none !important; }
 .home-song-meta { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .home-song-copy { min-width: 0; }
@@ -5833,9 +5832,9 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
             Play automatically on the home page
           </label>
           <div class="section-label">Live Site</div>
-          <label class="field-label">Live publish key (this browser only)</label>
-          <input class="editable-field" id="edit-publishKey" type="password" autocomplete="off" placeholder="Paste once, then Save Settings" />
-          <p id="publish-key-status" style="font-size:12px;color:var(--ink-mute);margin:6px 0 14px;font-family:'Inter Tight',sans-serif;">Paste the live publish key so saves update spdc.church for every visitor. The key stays on this browser and is not shown on the public site.</p>
+          <label class="field-label">Live publish key (optional)</label>
+          <input class="editable-field" id="edit-publishKey" type="password" autocomplete="off" placeholder="Only needed if you are not signed in as Admin" />
+          <p id="publish-key-status" style="font-size:12px;color:var(--ink-mute);margin:6px 0 14px;font-family:'Inter Tight',sans-serif;">Sign in as Admin and save. That update stays on spdc.church for every visitor, so you do not have to type it again.</p>
           <div class="save-bar">
             <button class="btn-save" onclick="saveSettings()">💾 Save Settings</button>
             <button class="add-btn" style="background:#a83232;color:white;" onclick="resetEverything()">⚠ Reset All</button>
@@ -6237,6 +6236,10 @@ function buildPersistableState(){
 }
 function saveState(){
   try {
+    if(livePublishEnabled && !suppressLivePublish){
+      STATE.contentUpdatedAt = new Date().toISOString();
+      localStorage.setItem('spdc_pending_publish', STATE.contentUpdatedAt);
+    }
     localStorage.setItem(SPDC_STORAGE_KEY, JSON.stringify(buildPersistableState()));
     scheduleLivePublish();
     return true;
@@ -6249,6 +6252,7 @@ function saveState(){
           STATE.imageLibrary = [];
         }
         localStorage.setItem(SPDC_STORAGE_KEY, JSON.stringify(buildPersistableState()));
+        scheduleLivePublish();
         try { toast('Storage was full — trimmed the image library so your flyers could save.', 'Saved with Cleanup'); } catch (_) {}
         return true;
       } catch (err2) {
@@ -6306,25 +6310,36 @@ function scheduleLivePublish(){
   clearTimeout(publishTimer);
   publishTimer = setTimeout(() => { publishLiveContent(false); }, 700);
 }
+function canPublishLive(){
+  return !!((localStorage.getItem('spdc_publish_key') || '').trim() || (sessionStorage.getItem('spdc_admin_gate') || '').trim());
+}
+function rememberLiveContent(){
+  try { localStorage.setItem(SPDC_STORAGE_KEY, JSON.stringify(buildPersistableState())); } catch (_) {}
+}
 async function publishLiveContent(announce){
   const key = (localStorage.getItem('spdc_publish_key') || '').trim();
-  if(!key){
-    if(announce) toast('Saved on this browser. Paste the live publish key in Admin → Settings so everyone sees it.', 'Not on the live site yet', true);
+  const admin = (sessionStorage.getItem('spdc_admin_gate') || '').trim();
+  if(!key && !admin){
+    if(announce) toast('Saved on this browser. Sign in as Admin and save again so every visitor sees it.', 'Not on the live site yet', true);
     return false;
   }
   try {
+    const headers = { 'Content-Type': 'application/json' };
+    if(key) headers['X-SPDC-Key'] = key;
+    if(admin) headers['X-SPDC-Admin'] = admin;
     const res = await fetch(LIVE_CONTENT_URL, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-SPDC-Key': key },
+      headers,
       body: JSON.stringify(publicSnapshot())
     });
     if(!res.ok){
-      if(announce) toast('The live site did not accept this update. Check the publish key.', 'Live update failed', true);
+      if(announce) toast('The live site did not accept this update. Sign in as Admin and try again.', 'Live update failed', true);
       return false;
     }
+    localStorage.removeItem('spdc_pending_publish');
     if(announce) toast('The live site is updated for every visitor.', 'Published');
     const status = document.getElementById('publish-key-status');
-    if(status) status.textContent = 'This browser updates the live site for every visitor.';
+    if(status) status.textContent = 'Saves from this Admin sign-in update the live site for every visitor.';
     return true;
   } catch (err) {
     console.warn('SPDC: live publish failed', err);
@@ -6340,8 +6355,15 @@ async function hydrateLiveContent(){
       if(!res.ok) continue;
       const data = await res.json();
       if(!data || data.empty || (!data.settings && !data.leaders && !data.texts)) continue;
+      const pending = localStorage.getItem('spdc_pending_publish');
+      if(pending){
+        if(canPublishLive()) publishLiveContent(false);
+        return;
+      }
       suppressLivePublish = true;
       applyPublicContent(data);
+      if(data.updatedAt) STATE.contentUpdatedAt = data.updatedAt;
+      rememberLiveContent();
       renderAll();
       if(typeof loadTextsIntoEditor === 'function') loadTextsIntoEditor();
       if(typeof loadSettingsIntoEditor === 'function') loadSettingsIntoEditor();
@@ -6680,8 +6702,6 @@ function startYouTubePlayback(player){
   tries.forEach((ms) => {
     setTimeout(() => {
       if (!homeSongWantsPlay) return;
-      const home = document.getElementById('page-home');
-      if (!home || !home.classList.contains('active')) return;
       try {
         let state = -1;
         try { state = player.getPlayerState(); } catch (_) {}
@@ -6702,7 +6722,7 @@ function mountYouTubeSong(id){
   ensureYouTubeAPI().then(() => {
     if (!document.getElementById('home-song-yt')) resetYouTubeHost();
     if (homeYtPlayer && homeYtId === id && homeYtReady) {
-      syncHomeSongForPage(document.getElementById('page-home') && document.getElementById('page-home').classList.contains('active') ? 'home' : '');
+      syncHomeSongForPage('site');
       return;
     }
     if (homeYtPlayer && homeYtPlayer.destroy) {
@@ -6733,8 +6753,7 @@ function mountYouTubeSong(id){
       events: {
         onReady: (e) => {
           homeYtReady = true;
-          const home = document.getElementById('page-home');
-          if (homeSongWantsPlay && home && home.classList.contains('active')) startYouTubePlayback(e.target);
+          if (homeSongWantsPlay) startYouTubePlayback(e.target);
           else updateHomeSongButton();
         },
         onStateChange: (ev) => {
@@ -6742,8 +6761,6 @@ function mountYouTubeSong(id){
           const st = ev && ev.data;
           const playing = st === YT.PlayerState.PLAYING || st === YT.PlayerState.BUFFERING;
           if (playing || !homeSongWantsPlay || homeSongAutoKicks > 8) return;
-          const home = document.getElementById('page-home');
-          if (!home || !home.classList.contains('active')) return;
           homeSongAutoKicks += 1;
           setTimeout(() => { if (homeSongWantsPlay) startYouTubePlayback(ev.target); }, 350);
         },
@@ -6775,8 +6792,6 @@ function pauseHomeSong(){
 function onHomeSongUnlock(e){
   if (e.target && e.target.closest && e.target.closest('#home-song')) return;
   if (!homeSongWantsPlay) return;
-  const home = document.getElementById('page-home');
-  if (!home || !home.classList.contains('active')) return;
   if (homeSongIsPlaying()) return;
   playHomeSong();
 }
@@ -6829,17 +6844,11 @@ function applyHomeSong(){
   const page = active && active.id ? active.id.replace(/^page-/, '') : 'home';
   syncHomeSongForPage(page);
 }
-function syncHomeSongForPage(page){
+function syncHomeSongForPage(){
   const wrap = document.getElementById('home-song');
-  if (wrap) wrap.classList.toggle('is-on-home', page === 'home' && !wrap.hidden);
-  if (page === 'home') {
-    if (homeSongWantsPlay) playHomeSong();
-    else updateHomeSongButton();
-  } else {
-    const keep = homeSongWantsPlay;
-    pauseHomeSong();
-    homeSongWantsPlay = keep;
-  }
+  if (wrap) wrap.classList.toggle('is-on-home', !wrap.hidden);
+  if (homeSongWantsPlay) playHomeSong();
+  else updateHomeSongButton();
 }
 function toggleHomeSong(){
   const cfg = homeSongConfig();
@@ -6880,16 +6889,14 @@ function initHomeSong(){
     const wrap = document.getElementById('home-song');
     if (wrap && homeSongConfig().url) wrap.hidden = false;
     updateHomeSongButton();
-    const home = document.getElementById('page-home');
-    if (homeSongWantsPlay && home && home.classList.contains('active') && !youtubeVideoId(homeSongConfig().url)) {
+    if (homeSongWantsPlay && !youtubeVideoId(homeSongConfig().url)) {
       audio.play().then(updateHomeSongButton).catch(() => {});
     }
   });
   document.addEventListener('pointerdown', onHomeSongUnlock);
   window.addEventListener('pageshow', () => {
     homeSongAutoKicks = 0;
-    const home = document.getElementById('page-home');
-    if (home && home.classList.contains('active') && homeSongWantsPlay && homeYtPlayer && homeYtReady) startYouTubePlayback(homeYtPlayer);
+    if (homeSongWantsPlay && homeYtPlayer && homeYtReady) startYouTubePlayback(homeYtPlayer);
   });
   applyHomeSong();
 }
@@ -6916,6 +6923,10 @@ function handleLogin(e){
   if(member.status==='pending'){toast('Your account is awaiting admin approval.','Not Yet Approved',true);return;}
   if(member.status==='suspended'){toast('This account has been suspended.','Suspended',true);return;}
   STATE.currentUser={id:member.id,name:member.name,email:member.email,role:member.role};
+  if(member.role==='admin'){
+    sessionStorage.setItem('spdc_admin_gate', password);
+    publishLiveContent(false);
+  }
   renderAuthState(); toast('Welcome back, '+member.name+'!','Signed In');
   e.target.reset(); goPage(member.role==='admin'?'admin':'member');
 }
@@ -6933,7 +6944,9 @@ function handleSignup(e){
 }
 function handleLogout(){
   const name=STATE.currentUser?STATE.currentUser.name:'';
-  STATE.currentUser=null; renderAuthState(); toast('See you soon'+(name?', '+name:'')+'!','Signed Out'); goPage('home');
+  STATE.currentUser=null;
+  sessionStorage.removeItem('spdc_admin_gate');
+  renderAuthState(); toast('See you soon'+(name?', '+name:'')+'!','Signed Out'); goPage('home');
 }
 function renderAuthState(){
   const el=document.getElementById('footer-auth'); if(!el)return;
@@ -7568,8 +7581,8 @@ function renderTexts(){
     const el=document.getElementById(k); if(el) el.textContent=STATE.texts[k];
   });
 }
-function loadSettingsIntoEditor(){ const s=STATE.settings; ['churchName','abbrev','bannerVerse','contactEmail','address','phone','domain','homeSongTitle','homeSongUrl'].forEach(k=>{const el=document.getElementById('edit-'+k);if(el)el.value=s[k]||'';}); const cb=document.getElementById('setting-require-approval'); if(cb)cb.checked=s.requireApproval; const song=document.getElementById('setting-home-song-autoplay'); if(song)song.checked=s.homeSongAutoplay!==false; const keyStatus=document.getElementById('publish-key-status'); if(keyStatus) keyStatus.textContent = localStorage.getItem('spdc_publish_key') ? 'This browser updates the live site for every visitor.' : 'Paste the live publish key so saves update spdc.church for every visitor. The key stays on this browser and is not shown on the public site.'; }
-function saveSettings(){ const s=STATE.settings; ['churchName','abbrev','bannerVerse','contactEmail','address','phone','domain','homeSongTitle','homeSongUrl'].forEach(k=>{const el=document.getElementById('edit-'+k);if(el)s[k]=el.value.trim();}); const cb=document.getElementById('setting-require-approval'); if(cb)s.requireApproval=cb.checked; const song=document.getElementById('setting-home-song-autoplay'); if(song)s.homeSongAutoplay=song.checked; const keyEl=document.getElementById('edit-publishKey'); if(keyEl && keyEl.value.trim()){ localStorage.setItem('spdc_publish_key', keyEl.value.trim()); keyEl.value=''; } renderSettings(); const saved=saveState(); if(!localStorage.getItem('spdc_publish_key')) toast('Saved on this browser. Paste the live publish key so everyone sees it.', 'Not on the live site yet', true); else if(saved) toast('Settings saved. The live site is updating.', 'Saved'); }
+function loadSettingsIntoEditor(){ const s=STATE.settings; ['churchName','abbrev','bannerVerse','contactEmail','address','phone','domain','homeSongTitle','homeSongUrl'].forEach(k=>{const el=document.getElementById('edit-'+k);if(el)el.value=s[k]||'';}); const cb=document.getElementById('setting-require-approval'); if(cb)cb.checked=s.requireApproval; const song=document.getElementById('setting-home-song-autoplay'); if(song)song.checked=s.homeSongAutoplay!==false; const keyStatus=document.getElementById('publish-key-status'); if(keyStatus) keyStatus.textContent = canPublishLive() ? 'Saves from this Admin sign-in update the live site for every visitor.' : 'Sign in as Admin and save. That update stays on spdc.church for every visitor, so you do not have to type it again.'; }
+function saveSettings(){ const s=STATE.settings; ['churchName','abbrev','bannerVerse','contactEmail','address','phone','domain','homeSongTitle','homeSongUrl'].forEach(k=>{const el=document.getElementById('edit-'+k);if(el)s[k]=el.value.trim();}); const cb=document.getElementById('setting-require-approval'); if(cb)s.requireApproval=cb.checked; const song=document.getElementById('setting-home-song-autoplay'); if(song)s.homeSongAutoplay=song.checked; const keyEl=document.getElementById('edit-publishKey'); if(keyEl && keyEl.value.trim()){ localStorage.setItem('spdc_publish_key', keyEl.value.trim()); keyEl.value=''; } renderSettings(); const saved=saveState(); if(!canPublishLive()) toast('Saved on this browser. Sign in as Admin and save again so every visitor sees it.', 'Not on the live site yet', true); else if(saved) toast('Settings saved. The live site is updating.', 'Saved'); }
 function renderSettings(){
   const s=STATE.settings;
   document.getElementById('nav-church-name').textContent=s.churchName;

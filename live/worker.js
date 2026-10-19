@@ -43,7 +43,11 @@ export default {
     if (request.method === 'PUT') {
       const expected = env.PUBLISH_KEY || '';
       const given = request.headers.get('X-SPDC-Key') || '';
-      if (!expected || !keysMatch(given, expected)) return json({ error: 'Unauthorized' }, 401);
+      const adminPassword = env.ADMIN_PASSWORD || '';
+      const givenAdmin = request.headers.get('X-SPDC-Admin') || '';
+      const keyOk = !!expected && keysMatch(given, expected);
+      const adminOk = !!adminPassword && keysMatch(givenAdmin, adminPassword);
+      if (!keyOk && !adminOk) return json({ error: 'Unauthorized' }, 401);
       const text = await request.text();
       if (text.length > MAX_BYTES) return json({ error: 'Content is too large to publish.' }, 413);
       let data;

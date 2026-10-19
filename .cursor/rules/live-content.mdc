@@ -1,0 +1,21 @@
+---
+description: Keep Admin edits on the live site and do not overwrite them with older defaults
+alwaysApply: true
+---
+
+# Live site content wins
+
+Public page content for https://spdc.church is stored at `https://spdc-live.support-551.workers.dev/content`.
+
+That copy is what visitors see. It can contain phone, email, bios, events, sermons, and other edits that are not in `index.html` or `assets/site-content.json`.
+
+## Before changing public copy
+1. Fetch the live content URL.
+2. Treat that JSON as the current text, leaders, settings, and lists.
+3. Do not replace a live field with an older default just because the HTML or `assets/site-content.json` still has the old value.
+4. If a live field is already filled, leave it unless the user asked to change that exact field.
+
+## When saving code
+- A code deploy must not wipe the live content record.
+- Do not PUT a snapshot that drops keys or leader entries you did not mean to remove.
+- Members, passwords, and the publish key never go in the site, git, or the live content record.

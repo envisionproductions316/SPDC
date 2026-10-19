@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-18-mail-gift-address" />
+<meta name="spdc-build" content="2026-10-18-mail-raeford-force" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -5693,7 +5693,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
             <div><h2>Giving Methods</h2><p class="sub">Cash App, Givelify, mail address, and QR codes for the Give page.</p></div>
             <button class="add-btn" onclick="openAddModal('giving')">+ Add Method</button>
           </div>
-          <p style="font-size:13px;color:var(--ink-mute);font-family:'Inter Tight',sans-serif;margin:-6px 0 14px;">Tip: Edit Cash App / Givelify to set your real $cashtag or Givelify link, then upload each QR code image. Mail uses the church address from Settings unless you override the detail.</p>
+          <p style="font-size:13px;color:var(--ink-mute);font-family:'Inter Tight',sans-serif;margin:-6px 0 14px;">Tip: Edit Cash App / Givelify for links and QR codes. Mail a Gift uses the gift mailing address (2950 Lindsay Rd, Raeford) — not the church street address.</p>
           <div class="admin-list" id="admin-giving-list"></div>
         </div>
 
@@ -7850,7 +7850,7 @@ function saveModal(){
     if(newItem.kind==='mail'){
       newItem.url='';
       newItem.qrImage=null;
-      if(!newItem.detail) newItem.detail=(STATE.settings.address||'').trim();
+      if(!newItem.detail) newItem.detail='2950 Lindsay Rd. Suite #54\nRaeford, NC 28376';
       if(!newItem.label) newItem.label='Mail a Gift';
       if(!newItem.icon) newItem.icon='✉️';
     } else {

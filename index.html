@@ -6320,7 +6320,7 @@ function applyPublicContent(data){
   if(STATE.selectedLeaderId === 'ldr-mary' || !((STATE.leaders || []).some(l => l.id === STATE.selectedLeaderId))){
     STATE.selectedLeaderId = (STATE.leaders && STATE.leaders[0] && STATE.leaders[0].id) || DEFAULT_STATE.selectedLeaderId;
   }
-  applyChurchFacts();
+  applyKnownCorrections();
 }
 function scheduleLivePublish(){
   if(!livePublishEnabled || suppressLivePublish) return;

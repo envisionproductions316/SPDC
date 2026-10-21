@@ -5069,6 +5069,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
       <div class="contact-form-block" id="contact-form-block">
         <h3>✉ Email Us</h3>
         <p>Send a quick message to the church office. Your note goes straight to our inbox — no email address shown on this page.</p>
+        <p id="contact-phone-line">Church phone: <a id="contact-phone" href="tel:9108877770">910-887-7770</a></p>
         <form id="public-contact-form" onsubmit="submitContactForm(event)">
           <div class="form-row-2">
             <div class="form-field">
@@ -5868,7 +5869,7 @@ footer ul li a:hover { color: var(--accent-light); padding-left: 6px; }
         <a class="map-link-btn waze" id="waze-link" href="#" target="_blank" rel="noopener">🚗 Waze</a>
         <a class="map-link-btn apple" id="apple-maps-link" href="#" target="_blank" rel="noopener">🍎 Apple Maps</a>
       </div>
-      <p style="margin-top:10px;"><a id="footer-phone" href="tel:" style="color:rgba(255,248,225,0.7);text-decoration:none;"></a></p>
+      <p style="margin-top:10px;"><a id="footer-phone" href="tel:9108877770" style="color:rgba(255,248,225,0.7);text-decoration:none;">910-887-7770</a></p>
       <p><a id="footer-email" href="#" onclick="openContactEmail(event)" aria-label="Email us" style="color:rgba(255,248,225,0.7);text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-family:'Inter Tight',sans-serif;font-weight:600;">✉ Email Us</a></p>
     </div>
     <div>
@@ -6099,7 +6100,7 @@ const DEFAULT_STATE = {
     bannerVerse:'"Behold, I will do a new thing." — Isaiah 43:19',
     contactEmail:"hello@spdc.church",
     address:"1291 W Broad St, St Pauls, NC 28384",
-    phone:"",
+    phone:"910-887-7770",
     domain:"spdc.church",
     requireApproval:true,
     homeSongTitle:"The Maranatha Song",
@@ -6133,10 +6134,10 @@ const DEFAULT_STATE = {
     },
     {
       id:'ldr-lakecia',
-      name:'Lakecia Minus',
+      name:'Keisha Minus',
       position:'Evangelist',
       roleLabel:'Evangelist | Leader | Servant of God',
-      initials:'LM',
+      initials:'KM',
       verse:'"Many are called, but few are chosen." — Matthew 22:14',
       bio1:'I believe God has called me for such a time as this, with a purpose that extends beyond myself to my family, my community, and future generations. As a child of God, mother, evangelist, leader, business owner, advocate, friend, and confidant, I embrace every opportunity to teach, preach, educate, empower, and make a meaningful difference in the lives of others. Above all, I am a servant of God, committed to walking in His purpose, leading with integrity, and leaving a legacy of faith, service, and lasting impact. "And who knoweth whether thou art come to the kingdom for such a time as this?" — Esther 4:14 (KJV)',
       bio2:'',
@@ -7589,7 +7590,7 @@ function renderSettings(){
   document.getElementById('footer-name').textContent=s.churchName;
   document.getElementById('topbar-verse').textContent=s.bannerVerse;
   document.getElementById('footer-address').textContent=s.address;
-  (function(){ const fp=document.getElementById('footer-phone'); if(!fp)return; const phone=(s.phone||'').trim(); fp.textContent=phone; fp.href=phone?('tel:'+phone.replace(/\D/g,'')):'#'; fp.style.display=phone?'':'none'; })();
+  (function(){ const fp=document.getElementById('footer-phone'); if(!fp)return; const phone=(s.phone||'').trim(); fp.textContent=phone; fp.href=phone?('tel:'+phone.replace(/\D/g,'')):'#'; fp.style.display=phone?'':'none'; const line=document.getElementById('contact-phone-line'); const cp=document.getElementById('contact-phone'); if(cp){ cp.textContent=phone; cp.href=phone?('tel:'+phone.replace(/\D/g,'')):'#'; } if(line) line.style.display=phone?'':'none'; })();
   (function(){
     const fe=document.getElementById('footer-email');
     if(!fe) return;

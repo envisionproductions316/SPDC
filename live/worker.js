@@ -57,6 +57,19 @@ export default {
       delete data.currentUser;
       delete data.givingHistory;
       delete data.newsletterSubs;
+      if (data.settings && typeof data.settings === 'object' && !String(data.settings.phone || '').trim()) {
+        data.settings.phone = '910-887-7770';
+      }
+      if (Array.isArray(data.leaders)) {
+        data.leaders.forEach((leader) => {
+          if (!leader) return;
+          const name = String(leader.name || '');
+          if (leader.id === 'ldr-lakecia' && /^lakecia minus$/i.test(name)) {
+            leader.name = 'Keisha Minus';
+            leader.initials = 'KM';
+          }
+        });
+      }
       data.version = 1;
       data.updatedAt = new Date().toISOString();
       const stored = JSON.stringify(data);

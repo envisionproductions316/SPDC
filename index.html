@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta name="spdc-build" content="2026-10-19-song-persists" />
+<meta name="spdc-build" content="2026-10-20-keisha-phone" />
 <meta name="theme-color" content="#0d2a6b" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -6189,6 +6189,20 @@ const SPDC_STORAGE_KEY = 'spdc_state_v10';
 try{['spdc_state_v6','spdc_state_v7','spdc_state_v8','spdc_state_v9'].forEach(k=>localStorage.removeItem(k));}catch(_){}
 try { ['spdc_state_v7','spdc_state_v6','spdc_state_v5','spdc_state_v4','spdc_state'].forEach(k=>localStorage.removeItem(k)); } catch(_){}
 
+function applyKnownCorrections(){
+  if(Array.isArray(STATE.leaders)){
+    STATE.leaders.forEach(l => {
+      if(!l) return;
+      if(l.id === 'ldr-lakecia' || /^lakecia minus$/i.test(String(l.name || ''))){
+        l.name = 'Keisha Minus';
+        l.initials = 'KM';
+      }
+    });
+  }
+  if(STATE.settings && !String(STATE.settings.phone || '').trim()){
+    STATE.settings.phone = '910-887-7770';
+  }
+}
 function loadPersistedState(){
   try {
     const raw = localStorage.getItem(SPDC_STORAGE_KEY);
@@ -6206,6 +6220,7 @@ function loadPersistedState(){
 
     STATE.social = Object.assign({}, DEFAULT_STATE.social, saved.social || {});
     STATE.logoAdjust = Object.assign({}, DEFAULT_STATE.logoAdjust, saved.logoAdjust || {});
+    applyKnownCorrections();
   } catch (err) {
     console.warn('SPDC: could not restore saved state', err);
   }
@@ -6305,6 +6320,7 @@ function applyPublicContent(data){
   if(STATE.selectedLeaderId === 'ldr-mary' || !((STATE.leaders || []).some(l => l.id === STATE.selectedLeaderId))){
     STATE.selectedLeaderId = (STATE.leaders && STATE.leaders[0] && STATE.leaders[0].id) || DEFAULT_STATE.selectedLeaderId;
   }
+  applyChurchFacts();
 }
 function scheduleLivePublish(){
   if(!livePublishEnabled || suppressLivePublish) return;
@@ -6356,14 +6372,10 @@ async function hydrateLiveContent(){
       if(!res.ok) continue;
       const data = await res.json();
       if(!data || data.empty || (!data.settings && !data.leaders && !data.texts)) continue;
-      const pending = localStorage.getItem('spdc_pending_publish');
-      if(pending){
-        if(canPublishLive()) publishLiveContent(false);
-        return;
-      }
       suppressLivePublish = true;
       applyPublicContent(data);
       if(data.updatedAt) STATE.contentUpdatedAt = data.updatedAt;
+      localStorage.removeItem('spdc_pending_publish');
       rememberLiveContent();
       renderAll();
       if(typeof loadTextsIntoEditor === 'function') loadTextsIntoEditor();

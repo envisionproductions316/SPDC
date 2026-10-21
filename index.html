@@ -7602,7 +7602,7 @@ function renderSettings(){
   document.getElementById('footer-name').textContent=s.churchName;
   document.getElementById('topbar-verse').textContent=s.bannerVerse;
   document.getElementById('footer-address').textContent=s.address;
-  (function(){ const fp=document.getElementById('footer-phone'); if(!fp)return; const phone=(s.phone||'').trim(); fp.textContent=phone; fp.href=phone?('tel:'+phone.replace(/\D/g,'')):'#'; fp.style.display=phone?'':'none'; const line=document.getElementById('contact-phone-line'); const cp=document.getElementById('contact-phone'); if(cp){ cp.textContent=phone; cp.href=phone?('tel:'+phone.replace(/\D/g,'')):'#'; } if(line) line.style.display=phone?'':'none'; })();
+  (function(){ const fp=document.getElementById('footer-phone'); if(!fp)return; const phone=(s.phone||'910-887-7770').trim(); fp.textContent=phone; fp.href=phone?('tel:'+phone.replace(/\D/g,'')):'#'; fp.style.display=phone?'':'none'; const line=document.getElementById('contact-phone-line'); const cp=document.getElementById('contact-phone'); if(cp){ cp.textContent=phone; cp.href=phone?('tel:'+phone.replace(/\D/g,'')):'#'; } if(line) line.style.display=phone?'':'none'; })();
   (function(){
     const fe=document.getElementById('footer-email');
     if(!fe) return;
@@ -7657,6 +7657,7 @@ const PUBLISHED_LEADER_IMAGES = {
   'ldr-lakecia':'assets/leadership/lakecia.jpg'
 };
 function migrateLeaders(){
+  applyKnownCorrections();
   if(!Array.isArray(STATE.leaders)) STATE.leaders = [];
   const kept = leadersWithoutMary(STATE.leaders);
   const removedMary = kept.length !== STATE.leaders.length || STATE.selectedLeaderId === 'ldr-mary';
